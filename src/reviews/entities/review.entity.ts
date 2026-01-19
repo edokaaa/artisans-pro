@@ -28,7 +28,7 @@ export class Review extends SoftDeleteEntity {
 
   @ManyToOne(() => Client, { nullable: true })
   @JoinColumn({ name: 'client_id' })
-  client?: Client;
+  client?: Client | null;
 
   @ManyToOne(() => ServiceProvider)
   @JoinColumn({ name: 'service_provider_id' })

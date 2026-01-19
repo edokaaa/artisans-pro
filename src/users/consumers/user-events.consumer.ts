@@ -1,9 +1,5 @@
 // users/consumers/user-events.consumer.ts
-import {
-  Injectable,
-  Logger,
-  OnModuleInit,
-} from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { RabbitMQService } from 'src/messaging/rabbitmq.service';
 import { User } from '../entities/user.entity';
@@ -39,15 +35,10 @@ export class UserEventsConsumer implements OnModuleInit {
     this.logger.log('User events consumer started');
   }
 
-  private async handleMessage(
-    msg: any,
-    channel: any,
-  ) {
+  private async handleMessage(msg: any, channel: any) {
     try {
       const routingKey = msg.fields.routingKey;
-      const payload: UserEventPayload = JSON.parse(
-        msg.content.toString(),
-      );
+      const payload: UserEventPayload = JSON.parse(msg.content.toString());
 
       if (!payload?.id) {
         throw new Error('Invalid user event payload');
@@ -57,10 +48,7 @@ export class UserEventsConsumer implements OnModuleInit {
 
       channel.ack(msg);
     } catch (error) {
-      this.logger.error(
-        'Failed to process user event',
-        error.stack,
-      );
+      this.logger.error('Failed to process user event', error.stack);
 
       /**
        * IMPORTANT:

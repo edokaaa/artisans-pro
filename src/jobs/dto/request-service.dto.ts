@@ -1,9 +1,4 @@
-import {
-  IsString,
-  IsBoolean,
-  IsLatitude,
-  IsLongitude,
-} from 'class-validator';
+import { IsString, IsBoolean, IsLatitude, IsLongitude } from 'class-validator';
 
 export class RequestServiceDto {
   @IsString()

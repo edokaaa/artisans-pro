@@ -5,10 +5,7 @@ import { User } from './entities/user.entity';
 import { UserEventsConsumer } from './consumers/user-events.consumer';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([User]),
-    MessagingModule,
-  ],
+  imports: [TypeOrmModule.forFeature([User]), MessagingModule],
   providers: [UserEventsConsumer],
 })
 export class UsersModule {}
