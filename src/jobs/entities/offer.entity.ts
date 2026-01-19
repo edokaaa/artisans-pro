@@ -1,0 +1,36 @@
+// jobs/entities/offer.entity.ts
+import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
+import { OfferStatus } from 'src/common/enums/offer-status.enum';
+import { Client } from 'src/users/entities/client.entity';
+import { ServiceProvider } from 'src/users/entities/service-provider.entity';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+
+@Entity('offers')
+export class Offer extends SoftDeleteEntity {
+  @Column()
+  title: string;
+
+  @Column('decimal', { precision: 10, scale: 2 })
+  amount: number;
+
+  @Column('text')
+  taskDescription: string;
+
+  @Column({ default: false })
+  useEscrow: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: OfferStatus,
+    default: OfferStatus.PENDING,
+  })
+  status: OfferStatus;
+
+  @ManyToOne(() => Client)
+  @JoinColumn({ name: 'client_id' })
+  client: Client;
+
+  @ManyToOne(() => ServiceProvider)
+  @JoinColumn({ name: 'service_provider_id' })
+  serviceProvider: ServiceProvider;
+}

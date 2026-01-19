@@ -1,19 +1,18 @@
 import { Module } from '@nestjs/common';
 import { CategoriesModule } from './categories/categories.module';
-import { ProvidersModule } from './providers/providers.module';
-import { ServicesModule } from './services/services.module';
 import { ReviewsModule } from './reviews/reviews.module';
-import { SubscriptionsModule } from './subscriptions/subscriptions.module';
-import { PaymentsModule } from './payments/payments.module';
 import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { CommonModule } from './common/common.module';
+import { JobsModule } from './jobs/jobs.module';
+import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validate }),
-    TypeOrmModule.forRootAsync({ 
+    TypeOrmModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: 'postgres',
@@ -25,15 +24,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
         synchronize: true,
         logging: configService.get<boolean>('DB_LOGGING'),
-      })
+      }),
     }),
     CategoriesModule,
-    ProvidersModule,
-    ServicesModule,
     ReviewsModule,
-    SubscriptionsModule,
-    PaymentsModule,
-    UsersModule
+    UsersModule,
+    CommonModule,
+    JobsModule,
+    MessagingModule,
   ],
   controllers: [],
   providers: [],
