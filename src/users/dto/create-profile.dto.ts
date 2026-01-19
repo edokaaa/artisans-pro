@@ -6,11 +6,11 @@ export class CreateProfileDto {
 
   @IsOptional()
   @IsLatitude()
-  latitude?: number;
+  latitude: number;
 
   @IsOptional()
   @IsLongitude()
-  longitude?: number;
+  longitude: number;
 
   @IsOptional()
   timezone?: string;

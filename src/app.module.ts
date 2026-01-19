@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import { JobsModule } from './jobs/jobs.module';
 import { MessagingModule } from './messaging/messaging.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { MessagingModule } from './messaging/messaging.module';
     CommonModule,
     JobsModule,
     MessagingModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
