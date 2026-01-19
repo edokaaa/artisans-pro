@@ -16,7 +16,7 @@ import { ReviewReply } from './entities/review-reply.entity';
 import { RequestStatus } from 'src/common/enums/request-status.enum';
 
 @Injectable()
-export class ReviewService {
+export class ReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepo: Repository<Review>,

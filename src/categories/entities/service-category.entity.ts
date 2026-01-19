@@ -1,4 +1,3 @@
-// categories/entities/service-category.entity.ts
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { ServiceCategorySkill } from './service-category-skill.entity';
