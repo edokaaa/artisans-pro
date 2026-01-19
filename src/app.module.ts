@@ -7,6 +7,7 @@ import { validate } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CommonModule } from './common/common.module';
 import { JobsModule } from './jobs/jobs.module';
+import { MessagingModule } from './messaging/messaging.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { JobsModule } from './jobs/jobs.module';
     UsersModule,
     CommonModule,
     JobsModule,
+    MessagingModule,
   ],
   controllers: [],
   providers: [],
