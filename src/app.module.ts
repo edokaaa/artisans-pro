@@ -9,6 +9,8 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { validate } from './config/env.validation';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DatabaseModule } from './database/database.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -33,7 +35,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     ReviewsModule,
     SubscriptionsModule,
     PaymentsModule,
-    UsersModule
+    UsersModule,
+    DatabaseModule,
+    CommonModule
   ],
   controllers: [],
   providers: [],
