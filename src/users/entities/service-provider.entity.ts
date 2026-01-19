@@ -1,0 +1,78 @@
+// users/entities/service-provider.entity.ts
+import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
+import {
+  Entity,
+  Column,
+  OneToOne,
+  JoinColumn,
+  ManyToMany,
+  JoinTable,
+} from 'typeorm';
+import { Profile } from './profile.entity';
+import { IdType } from 'src/common/enums/id-type.enum';
+import { VerificationStatus } from 'src/common/enums/verification-status.enum';
+import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
+
+@Entity('service_providers')
+export class ServiceProvider extends SoftDeleteEntity {
+  @OneToOne(() => Profile, { eager: true })
+  @JoinColumn({ name: 'profile_id' })
+  profile: Profile;
+
+  @Column()
+  fullName: string;
+
+  @Column({ nullable: true })
+  title?: string;
+
+  @Column({ nullable: true })
+  bio?: string;
+
+  @Column({ nullable: true })
+  companyName?: string;
+
+  @Column('text', { array: true })
+  workPhotoUrls: string[];
+
+  @Column({ type: 'enum', enum: IdType })
+  idType: IdType;
+
+  @Column()
+  idNumber: string;
+
+  @Column()
+  idPhotoFrontUrl: string;
+
+  @Column({ nullable: true })
+  idPhotoBackUrl?: string;
+
+  @Column()
+  selfieUrl: string;
+
+  @Column({
+    type: 'enum',
+    enum: VerificationStatus,
+    default: VerificationStatus.PENDING,
+  })
+  verificationStatus: VerificationStatus;
+
+  @Column({ nullable: true })
+  verificationFailureReason?: string;
+
+  @Column({ default: true })
+  available: boolean;
+
+  @Column()
+  phoneNumber: string;
+
+  @Column({ default: false })
+  phoneNumberVerified: boolean;
+
+  @ManyToMany(() => ServiceCategorySkill)
+  @JoinTable({
+    name: 'service_provider_skills',
+    joinColumn: { name: 'service_provider_id' },
+    inverseJoinColumn: { name: 'service_category_skill_id' },
+  })
+  skills: ServiceCategorySkill[];
+}
