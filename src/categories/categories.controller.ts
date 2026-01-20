@@ -5,6 +5,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 
@@ -16,6 +17,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { CreateCategorySkillDto } from './dto/create-category-skill.dto';
+import { SearchCategoriesDto } from './dto/search-categories.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -26,8 +28,8 @@ export class CategoriesController {
    * -------------------------------------- */
 
   @Get()
-  getAllCategories() {
-    return this.categoriesService.getAllCategories();
+  getAllCategories(@Query() query: SearchCategoriesDto) {
+    return this.categoriesService.getAllCategories(query.q);
   }
 
   @Get(':slug')
