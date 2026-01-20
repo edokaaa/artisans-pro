@@ -15,6 +15,7 @@ import { ServiceProvider } from './entities/service-provider.entity';
 import { VerificationStatus } from 'src/common/enums/verification-status.enum';
 import { Role } from 'src/common/enums/roles.enum';
 import { CreateUserDto } from './dto/create-user.dto';
+import { CreateServiceProviderDto } from './dto/create-service-provider.dto';
 
 @Injectable()
 export class UsersService {
@@ -126,7 +127,7 @@ export class UsersService {
 
   async createServiceProvider(
     userId: string,
-    data: Partial<ServiceProvider>,
+    data: CreateServiceProviderDto,
   ): Promise<ServiceProvider> {
     const profile = await this.getProfileByUserId(userId);
 
@@ -140,6 +141,7 @@ export class UsersService {
 
     const provider = this.providerRepo.create({
       ...data,
+      fullName: data.name,
       profile,
       verificationStatus: VerificationStatus.PENDING,
     });
