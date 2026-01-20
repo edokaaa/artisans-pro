@@ -14,6 +14,7 @@ import { ServiceProvider } from './entities/service-provider.entity';
 
 import { VerificationStatus } from 'src/common/enums/verification-status.enum';
 import { Role } from 'src/common/enums/roles.enum';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -205,5 +206,10 @@ export class UsersService {
       status === VerificationStatus.FAILED ? failureReason : undefined;
 
     return this.providerRepo.save(provider);
+  }
+  async createDemoUser(userDto: CreateUserDto): Promise<User> {
+    const user = await this.userRepo.save({...userDto, lastSyncedAt: new Date()});
+
+    return user;
   }
 }

@@ -6,11 +6,9 @@ import {
   IsPhoneNumber,
 } from 'class-validator';
 import { IdType } from 'src/common/enums/id-type.enum';
+import { CreateProfileDto } from './create-profile.dto';
 
-export class CreateServiceProviderDto {
-  @IsString()
-  fullName: string;
-
+export class CreateServiceProviderDto extends CreateProfileDto {
   @IsOptional()
   title?: string;
 
