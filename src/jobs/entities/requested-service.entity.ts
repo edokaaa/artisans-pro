@@ -1,12 +1,12 @@
 // jobs/entities/requested-service.entity.ts
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ServiceProviderJob } from './service-provider-job.entity';
-import { BaseGeoEntity } from '../../common/entities/base.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { Client } from '../../users/entities/client.entity';
 import { RequestStatus } from '../../common/enums/request-status.enum';
 
 @Entity('requested_services')
-export class RequestedService extends BaseGeoEntity {
+export class RequestedService extends BaseEntity {
   @ManyToOne(() => ServiceProviderJob)
   @JoinColumn({ name: 'service_provider_job_id' })
   job: ServiceProviderJob;
@@ -42,4 +42,17 @@ export class RequestedService extends BaseGeoEntity {
 
   @Column({ nullable: true })
   cancellationReason?: string;
+
+
+  @Index('idx_requested_services_location', { synchronize: false })
+  @Column({
+    type: 'geography',
+    spatialFeatureType: 'Point',
+    srid: 4326,
+    nullable: true,
+  })
+  location?: {
+    type: 'Point';
+    coordinates: [number, number]; // [longitude, latitude]
+  };
 }
