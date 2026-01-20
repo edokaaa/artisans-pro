@@ -208,7 +208,10 @@ export class UsersService {
     return this.providerRepo.save(provider);
   }
   async createDemoUser(userDto: CreateUserDto): Promise<User> {
-    const user = await this.userRepo.save({...userDto, lastSyncedAt: new Date()});
+    const user = await this.userRepo.save({
+      ...userDto,
+      lastSyncedAt: new Date(),
+    });
 
     return user;
   }

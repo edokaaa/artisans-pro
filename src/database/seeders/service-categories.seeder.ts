@@ -1,4 +1,3 @@
-// src/database/seeders/service-categories.seeder.ts
 import { DataSource } from 'typeorm';
 import { ServiceCategory } from 'src/categories/entities/service-category.entity';
 import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
@@ -14,12 +13,13 @@ export async function seedServiceCategories(
     {
       name: 'AC Repair',
       skills: ['Installation', 'Servicing', 'Repair'],
-      iconUrl: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR18uA6C5xaQGFUaVpEKQIeXmp3NzELx9x0XA&s'
+      iconUrl:
+        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR18uA6C5xaQGFUaVpEKQIeXmp3NzELx9x0XA&s',
     },
     {
       name: 'Cooking',
       skills: ['Intercontinental Dishes', 'Local Dishes', 'Pastery'],
-      iconUrl: 'https://imgur.com/download/koWDzBs/'
+      iconUrl: 'https://imgur.com/download/koWDzBs/',
     },
   ];
 

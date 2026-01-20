@@ -1,4 +1,3 @@
-// reviews/entities/report.entity.ts
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
 import { Client } from 'src/users/entities/client.entity';

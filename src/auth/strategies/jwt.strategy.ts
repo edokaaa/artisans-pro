@@ -7,7 +7,9 @@ import * as fs from 'fs';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(configService: ConfigService) {
-    const publicKeyPath = configService.getOrThrow<string>('JWT_PUBLIC_KEY_PATH');
+    const publicKeyPath = configService.getOrThrow<string>(
+      'JWT_PUBLIC_KEY_PATH',
+    );
     const publicKey = fs.readFileSync(publicKeyPath, 'utf-8');
 
     super({

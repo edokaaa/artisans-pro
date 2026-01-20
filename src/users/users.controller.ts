@@ -17,7 +17,10 @@ export class UsersController {
   @Post('profile')
   @UseGuards(JwtAuthGuard)
   @Roles('admin')
-  async createProfile(@CurrentUser() user: User, @Body() dto: CreateProfileDto) {
+  async createProfile(
+    @CurrentUser() user: User,
+    @Body() dto: CreateProfileDto,
+  ) {
     return await this.usersService.createProfile(user.id, dto.name, {
       type: 'Point',
       coordinates: [dto.longitude, dto.latitude],

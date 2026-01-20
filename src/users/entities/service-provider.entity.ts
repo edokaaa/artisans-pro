@@ -1,4 +1,3 @@
-// users/entities/service-provider.entity.ts
 import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
 import {
   Entity,

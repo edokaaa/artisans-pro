@@ -9,11 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([
-      Offer,
-      RequestedService,
-      ServiceProviderJob,
-    ]),
+    TypeOrmModule.forFeature([Offer, RequestedService, ServiceProviderJob]),
     UsersModule,
   ],
   providers: [JobsService],

@@ -1,4 +1,3 @@
-// jobs/entities/service-provider-job.entity.ts
 import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
 import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
 import { ServiceProvider } from 'src/users/entities/service-provider.entity';

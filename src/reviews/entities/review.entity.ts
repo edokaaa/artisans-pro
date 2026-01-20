@@ -1,4 +1,3 @@
-// reviews/entities/review.entity.ts
 import { Entity, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
 import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
 import { ReviewStars } from 'src/common/enums/review-stars.enum';

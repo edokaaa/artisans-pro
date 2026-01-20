@@ -1,4 +1,3 @@
-// jobs/entities/offer.entity.ts
 import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
 import { OfferStatus } from 'src/common/enums/offer-status.enum';
 import { Client } from 'src/users/entities/client.entity';
