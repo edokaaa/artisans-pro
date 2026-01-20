@@ -36,6 +36,12 @@ export class CreateServiceProviderDto extends CreateProfileDto {
   @IsString()
   selfieUrl: string;
 
+  @IsString()
+  state: string;
+
+  @IsString()
+  city: string;
+
   @IsPhoneNumber()
   phoneNumber: string;
 

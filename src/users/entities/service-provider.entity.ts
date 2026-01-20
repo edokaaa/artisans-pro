@@ -39,6 +39,12 @@ export class ServiceProvider extends SoftDeleteEntity {
   @Column()
   idNumber: string;
 
+  @Column({ nullable: true })
+  state: string;
+
+  @Column({ nullable: true })
+  city: string;
+
   @Column()
   idPhotoFrontUrl: string;
 
