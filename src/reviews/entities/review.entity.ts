@@ -1,9 +1,9 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToOne } from 'typeorm';
-import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
-import { ReviewStars } from 'src/common/enums/review-stars.enum';
-import { Client } from 'src/users/entities/client.entity';
-import { ServiceProvider } from 'src/users/entities/service-provider.entity';
-import { RequestedService } from 'src/jobs/entities/requested-service.entity';
+import { SoftDeleteEntity } from '../../common/entities/soft-delete.entity';
+import { ReviewStars } from '../../common/enums/review-stars.enum';
+import { Client } from '../../users/entities/client.entity';
+import { ServiceProvider } from '../../users/entities/service-provider.entity';
+import { RequestedService } from '../../jobs/entities/requested-service.entity';
 
 @Entity('reviews')
 export class Review extends SoftDeleteEntity {

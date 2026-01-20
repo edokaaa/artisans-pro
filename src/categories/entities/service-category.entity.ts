@@ -1,4 +1,4 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 import { Entity, Column, OneToMany } from 'typeorm';
 import { ServiceCategorySkill } from './service-category-skill.entity';
 

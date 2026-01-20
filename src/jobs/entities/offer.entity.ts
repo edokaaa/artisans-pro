@@ -1,7 +1,7 @@
-import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
-import { OfferStatus } from 'src/common/enums/offer-status.enum';
-import { Client } from 'src/users/entities/client.entity';
-import { ServiceProvider } from 'src/users/entities/service-provider.entity';
+import { SoftDeleteEntity } from '../../common/entities/soft-delete.entity';
+import { OfferStatus } from '../../common/enums/offer-status.enum';
+import { Client } from '../../users/entities/client.entity';
+import { ServiceProvider } from '../../users/entities/service-provider.entity';
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('offers')

@@ -1,6 +1,6 @@
-import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
-import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
-import { ServiceProvider } from 'src/users/entities/service-provider.entity';
+import { ServiceCategorySkill } from '../../categories/entities/service-category-skill.entity';
+import { SoftDeleteEntity } from '../../common/entities/soft-delete.entity';
+import { ServiceProvider } from '../../users/entities/service-provider.entity';
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 @Entity('service_provider_jobs')

@@ -1,4 +1,4 @@
-import { SoftDeleteEntity } from 'src/common/entities/soft-delete.entity';
+import { SoftDeleteEntity } from '../../common/entities/soft-delete.entity';
 import {
   Entity,
   Column,
@@ -8,9 +8,9 @@ import {
   JoinTable,
 } from 'typeorm';
 import { Profile } from './profile.entity';
-import { IdType } from 'src/common/enums/id-type.enum';
-import { VerificationStatus } from 'src/common/enums/verification-status.enum';
-import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
+import { IdType } from '../../common/enums/id-type.enum';
+import { VerificationStatus } from '../../common/enums/verification-status.enum';
+import { ServiceCategorySkill } from '../../categories/entities/service-category-skill.entity';
 
 @Entity('service_providers')
 export class ServiceProvider extends SoftDeleteEntity {

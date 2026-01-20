@@ -1,9 +1,9 @@
 // jobs/entities/requested-service.entity.ts
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ServiceProviderJob } from './service-provider-job.entity';
-import { BaseGeoEntity } from 'src/common/entities/base.entity';
-import { Client } from 'src/users/entities/client.entity';
-import { RequestStatus } from 'src/common/enums/request-status.enum';
+import { BaseGeoEntity } from '../../common/entities/base.entity';
+import { Client } from '../../users/entities/client.entity';
+import { RequestStatus } from '../../common/enums/request-status.enum';
 
 @Entity('requested_services')
 export class RequestedService extends BaseGeoEntity {

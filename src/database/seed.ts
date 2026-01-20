@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 import dataSource from './data-source';
-import { seedServiceCategories } from './seeders/service-categoris.seeder';
+import { seedServiceCategories } from './seeders/service-categories.seeder';
 
 async function runSeeds() {
   await dataSource.initialize();

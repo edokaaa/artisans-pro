@@ -1,7 +1,6 @@
-// categories/entities/service-category-skill.entity.ts
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { ServiceCategory } from './service-category.entity';
-import { BaseEntity } from 'src/common/entities/base.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('service_category_skills')
 export class ServiceCategorySkill extends BaseEntity {

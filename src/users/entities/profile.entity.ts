@@ -1,6 +1,6 @@
 import { Entity, Column, OneToOne, JoinColumn } from 'typeorm';
 import { User } from './user.entity';
-import { BaseGeoEntity } from 'src/common/entities/base.entity';
+import { BaseGeoEntity } from '../../common/entities/base.entity';
 
 @Entity('profiles')
 export class Profile extends BaseGeoEntity {
