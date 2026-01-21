@@ -43,7 +43,6 @@ export class RequestedService extends BaseEntity {
   @Column({ nullable: true })
   cancellationReason?: string;
 
-
   @Index('idx_requested_services_location', { synchronize: false })
   @Column({
     type: 'geography',

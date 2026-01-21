@@ -169,7 +169,8 @@ export class CategoriesService {
       return qb.orderBy('category.name', 'ASC').getMany();
     }
 
-    const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(q);
+    const isUUID =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(q);
 
     qb.where('category.name ILIKE :q', { q: `%${q}%` })
       .orWhere('category.slug ILIKE :q', { q: `%${q}%` })
@@ -177,12 +178,11 @@ export class CategoriesService {
       .orWhere('skill.slug ILIKE :q', { q: `%${q}%` });
 
     if (isUUID) {
-      qb.orWhere('category.id = :id', { id: q })
-        .orWhere('skill.id = :id', { id: q });
+      qb.orWhere('category.id = :id', { id: q }).orWhere('skill.id = :id', {
+        id: q,
+      });
     }
 
-    return qb
-      .orderBy('category.name', 'ASC')
-      .getMany();
+    return qb.orderBy('category.name', 'ASC').getMany();
   }
 }

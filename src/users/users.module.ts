@@ -8,14 +8,22 @@ import { Profile } from './entities/profile.entity';
 import { ServiceProvider } from './entities/service-provider.entity';
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
+import { ServiceProvidersService } from './service-provider.service';
+import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Client, Profile, ServiceProvider]),
+    TypeOrmModule.forFeature([
+      User,
+      Client,
+      Profile,
+      ServiceProvider,
+      ServiceCategorySkill,
+    ]),
     MessagingModule,
   ],
   controllers: [UsersController],
-  providers: [UserEventsConsumer, UsersService],
+  providers: [UserEventsConsumer, UsersService, ServiceProvidersService],
   exports: [UsersService],
 })
 export class UsersModule {}
