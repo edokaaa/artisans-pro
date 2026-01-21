@@ -15,9 +15,14 @@ export class ServiceProvidersService {
    */
   async findBySkillId(
     skillId: string,
-    filters?: { state?: string; city?: string },
+    filters?: {
+      state?: string;
+      city?: string;
+      latitude?: number;
+      longitude?: number;
+    },
   ): Promise<ServiceProvider[]> {
-    const qb = this.baseProviderQuery();
+    const qb = this.baseProviderQuery(filters);
 
     qb.innerJoin(
       'service_provider_skills',
@@ -41,9 +46,14 @@ export class ServiceProvidersService {
    */
   async findByCategoryId(
     categoryId: string,
-    filters?: { state?: string; city?: string },
+    filters?: {
+      state?: string;
+      city?: string;
+      latitude?: number;
+      longitude?: number;
+    },
   ): Promise<ServiceProvider[]> {
-    const qb = this.baseProviderQuery();
+    const qb = this.baseProviderQuery(filters);
 
     qb.innerJoin(
       'service_provider_skills',
@@ -70,25 +80,52 @@ export class ServiceProvidersService {
   /**
    * Base provider query (shared)
    */
-  private baseProviderQuery() {
-    return this.providerRepo
+  private baseProviderQuery(filters?: {
+    latitude?: number;
+    longitude?: number;
+  }) {
+    const qb = this.providerRepo
       .createQueryBuilder('provider')
       .leftJoinAndSelect('provider.profile', 'profile')
       .leftJoinAndSelect('provider.skills', 'skills')
-      .leftJoinAndSelect('skills.category', 'category')
-      .addSelect(
-        (qb) =>
-          qb
-            .select(
-              'COALESCE(AVG(CAST(review.stars::text AS NUMERIC)), 0)',
-              'averageRating',
-            )
-            .from('reviews', 'review')
-            .where('review.service_provider_id = provider.id')
-            .andWhere('review.deletedAt IS NULL'),
-        'averageRating',
-      )
-      .distinctOn(['provider.id']);
+      .leftJoinAndSelect('skills.category', 'category');
+
+    if (filters?.latitude && filters?.longitude) {
+      qb.addSelect(
+        `
+          ST_Distance(
+            profile.location,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography
+          ) / 1000
+          `,
+        'distance_km',
+      ).setParameters({
+        lat: filters?.latitude,
+        lng: filters?.longitude,
+      });
+    }
+
+    qb.addSelect(
+      (qb) =>
+        qb
+          .select(
+            'COALESCE(AVG(CAST(review.stars::text AS NUMERIC)), 0)',
+            'averageRating',
+          )
+          .from('reviews', 'review')
+          .where('review.service_provider_id = provider.id')
+          .andWhere('review.deletedAt IS NULL'),
+      'averageRating',
+    )
+      .distinctOn(['provider.id'])
+      .orderBy('provider.id', 'ASC');
+
+    // Add distance ordering if location filters provided
+    if (filters?.latitude && filters?.longitude) {
+      qb.addOrderBy('distance_km', 'ASC');
+    }
+
+    return qb;
   }
 
   /**
@@ -123,6 +160,9 @@ export class ServiceProvidersService {
     return result.entities.map((provider, index) => ({
       ...provider,
       averageRating: parseFloat(result.raw[index]?.averageRating) || 0,
+      distanceKm: result.raw[index]?.distance_km
+        ? parseFloat(result.raw[index].distance_km)
+        : undefined,
     }));
   }
 }
