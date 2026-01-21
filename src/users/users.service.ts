@@ -5,7 +5,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 
 import { User } from './entities/user.entity';
 import { Profile } from './entities/profile.entity';
@@ -16,6 +16,7 @@ import { VerificationStatus } from 'src/common/enums/verification-status.enum';
 import { Role } from 'src/common/enums/roles.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateServiceProviderDto } from './dto/create-service-provider.dto';
+import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
 
 @Injectable()
 export class UsersService {
@@ -31,6 +32,9 @@ export class UsersService {
 
     @InjectRepository(ServiceProvider)
     private readonly providerRepo: Repository<ServiceProvider>,
+
+    @InjectRepository(ServiceCategorySkill)
+    private readonly skillRepo: Repository<ServiceCategorySkill>,
   ) {}
 
   /* -----------------------------------------
@@ -139,10 +143,23 @@ export class UsersService {
       throw new BadRequestException('Service provider already exists');
     }
 
+    // Fetch skills if skillIds are provided
+    let skills: ServiceCategorySkill[] = [];
+    if (data.skillIds && data.skillIds.length > 0) {
+      skills = await this.skillRepo.find({
+        where: { id: In(data.skillIds) },
+      });
+
+      if (skills.length !== data.skillIds.length) {
+        throw new BadRequestException('Some skills not found');
+      }
+    }
+
     const provider = this.providerRepo.create({
       ...data,
       fullName: data.name,
       profile,
+      skills,
       verificationStatus: VerificationStatus.PENDING,
     });
 
