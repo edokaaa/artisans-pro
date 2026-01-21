@@ -1,6 +1,7 @@
 import { Entity, Column, OneToOne, JoinColumn, Index } from 'typeorm';
 import { User } from './user.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
+import { ServiceProvider } from './service-provider.entity';
 
 @Entity('profiles')
 export class Profile extends BaseEntity {
@@ -22,4 +23,7 @@ export class Profile extends BaseEntity {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
   };
+
+  @OneToOne(() => ServiceProvider, (sp) => sp.profile)
+  serviceProvider: ServiceProvider;
 }

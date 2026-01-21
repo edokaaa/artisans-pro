@@ -13,6 +13,7 @@ import { IdType } from '../../common/enums/id-type.enum';
 import { VerificationStatus } from '../../common/enums/verification-status.enum';
 import { ServiceCategorySkill } from '../../categories/entities/service-category-skill.entity';
 import { Review } from '../../reviews/entities/review.entity';
+import { ServiceProviderJob } from 'src/jobs/entities/service-provider-job.entity';
 
 @Entity('service_providers')
 export class ServiceProvider extends SoftDeleteEntity {
@@ -85,6 +86,9 @@ export class ServiceProvider extends SoftDeleteEntity {
 
   @OneToMany(() => Review, (review) => review.serviceProvider)
   reviews: Review[];
+
+  @OneToMany(() => ServiceProviderJob, (job) => job.serviceProvider)
+  jobs: ServiceProviderJob[];
 
   // Virtual field - populated by query
   averageRating?: number;

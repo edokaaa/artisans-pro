@@ -15,6 +15,9 @@ import { Offer } from './entities/offer.entity';
 
 import { RequestStatus } from 'src/common/enums/request-status.enum';
 import { OfferStatus } from 'src/common/enums/offer-status.enum';
+import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
+import { CreateJobDto } from './dto/create-job.dto';
+import { ServiceProvidersService } from 'src/users/service-provider.service';
 
 @Injectable()
 export class JobsService {
@@ -29,6 +32,11 @@ export class JobsService {
     private readonly offerRepo: Repository<Offer>,
 
     private readonly usersService: UsersService,
+    
+    private readonly serviceProviderService: ServiceProvidersService,
+
+    @InjectRepository(ServiceCategorySkill)
+    private readonly skillRepo: Repository<ServiceCategorySkill>,
   ) {}
 
   /* ----------------------------------------
@@ -37,12 +45,18 @@ export class JobsService {
 
   async createProviderJob(
     userId: string,
-    data: Partial<ServiceProviderJob>,
+    data: CreateJobDto,
   ): Promise<ServiceProviderJob> {
     const provider = await this.usersService.assertServiceProvider(userId);
 
+    const skill = await this.skillRepo.findOne({where: {id: data.skillId}});
+
+    if (!skill) {
+    throw new BadRequestException('Skill not found');
+  }
     const job = this.jobRepo.create({
       ...data,
+      skill,
       serviceProvider: provider,
       isActive: false,
     });
@@ -50,9 +64,10 @@ export class JobsService {
     return this.jobRepo.save(job);
   }
 
-  async activateJob(
+  async activateDeactivateJob(
     userId: string,
     jobId: string,
+    action: 'activate' | 'deactivate'
   ): Promise<ServiceProviderJob> {
     const provider = await this.usersService.assertServiceProvider(userId);
 
@@ -67,7 +82,7 @@ export class JobsService {
       throw new ForbiddenException('Not your job');
     }
 
-    job.isActive = true;
+    job.isActive = action === 'activate';
     return this.jobRepo.save(job);
   }
 
@@ -93,14 +108,20 @@ export class JobsService {
     return this.jobRepo.save(job);
   }
 
+  async getJobBySpId(userId: string) {
+    const provider = await this.usersService.assertServiceProvider(userId);
+    const providerWithJobs = await this.serviceProviderService.getWithJobs(provider.id);
+    return providerWithJobs?.jobs;
+  }
+
   /* ----------------------------------------
    * Requested Services
    * -------------------------------------- */
 
   async requestService(
     userId: string,
-    jobId: string,
     payload: {
+      jobId: string;
       description?: string;
       date?: Date;
       //   time?: string;
@@ -111,7 +132,7 @@ export class JobsService {
     const client = await this.usersService.assertClient(userId);
 
     const job = await this.jobRepo.findOne({
-      where: { id: jobId, isActive: true },
+      where: { id: payload.jobId, isActive: true },
       relations: ['serviceProvider'],
     });
 

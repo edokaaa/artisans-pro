@@ -24,6 +24,6 @@ import { ServiceCategorySkill } from 'src/categories/entities/service-category-s
   ],
   controllers: [UsersController],
   providers: [UserEventsConsumer, UsersService, ServiceProvidersService],
-  exports: [UsersService],
+  exports: [UsersService, ServiceProvidersService],
 })
 export class UsersModule {}

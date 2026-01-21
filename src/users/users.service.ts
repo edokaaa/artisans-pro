@@ -78,7 +78,7 @@ export class UsersService {
   async getProfileByUserId(userId: string): Promise<Profile> {
     const profile = await this.profileRepo.findOne({
       where: { user: { id: userId } },
-      relations: ['user'],
+      relations: ['user', 'serviceProvider'],
     });
 
     if (!profile) {

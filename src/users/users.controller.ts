@@ -20,6 +20,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { SearchProvidersDto } from './dto/search-providers.dto';
 import { ServiceProvidersService } from './service-provider.service';
+import { VerifyServiceProviderDto } from './dto/verify-service-provider.dto';
+import { Role } from 'src/common/enums/roles.enum';
 
 @Controller('users')
 export class UsersController {
@@ -93,5 +95,17 @@ export class UsersController {
   @Get('service-provider/:id')
   getServiceProvider(@Param('id', ParseUUIDPipe) id: string) {
     return this.serviceProviderService.getById(id);
+  }
+
+  @Post('service-provider/:id/verify')
+  verifyServiceProvider(@Param('id', ParseUUIDPipe) id: string, @Body() request: VerifyServiceProviderDto) {
+    const role: Role = Role.ADMIN; // TODO: Get role from jwt
+    return this.usersService.verifyServiceProvider(id, request.status, request.failureReason, role)
+  }
+
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  getUserProfile(@CurrentUser() user: User) {
+    return this.usersService.getProfileByUserId(user.id);
   }
 }

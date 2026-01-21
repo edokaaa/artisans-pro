@@ -18,6 +18,7 @@ export class ServiceProvidersService {
       .createQueryBuilder('provider')
       .leftJoinAndSelect('provider.profile', 'profile')
       .leftJoinAndSelect('provider.reviews', 'reviews')
+      .leftJoinAndSelect('provider.jobs', 'jobs')
       .leftJoinAndSelect('reviews.reply', 'reply')
       .leftJoinAndSelect('profile.user', 'user')
       .addSelect(
@@ -111,6 +112,13 @@ export class ServiceProvidersService {
     this.applyLocationFilters(qb, filters);
 
     return this.mapAverageRating(await qb.getRawAndEntities());
+  }
+
+  async getWithJobs (providerId: string) {
+    return await this.providerRepo.findOne({
+      where: { id: providerId },
+      relations: ['jobs'],
+    });
   }
 
   /**

@@ -5,6 +5,7 @@ import {
   Param,
   Body,
   UseGuards,
+  Get,
 } from '@nestjs/common';
 
 import { JobsService } from './jobs.service';
@@ -24,17 +25,26 @@ export class JobsController {
     return this.jobsService.createProviderJob(user.id, dto);
   }
 
-  @Patch(':id/activate')
-  activateJob(@CurrentUser() user, @Param('id') jobId: string) {
-    return this.jobsService.activateJob(user.id, jobId);
+  @Get()
+  getJobs(@CurrentUser() user) {
+    return this.jobsService.getJobBySpId(user.id);
   }
 
-  @Post(':id/request')
+  @Patch(':id/activate')
+  activateJob(@CurrentUser() user, @Param('id') jobId: string) {
+    return this.jobsService.activateDeactivateJob(user.id, jobId, 'activate');
+  }
+
+  @Patch(':id/deactivate')
+  deactivateJob(@CurrentUser() user, @Param('id') jobId: string) {
+    return this.jobsService.activateDeactivateJob(user.id, jobId, 'deactivate');
+  }
+
+  @Post('/request')
   requestService(
     @CurrentUser() user,
-    @Param('id') jobId: string,
     @Body() dto: RequestServiceDto,
   ) {
-    return this.jobsService.requestService(user.id, jobId, dto);
+    return this.jobsService.requestService(user.id, dto);
   }
 }

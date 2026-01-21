@@ -6,10 +6,11 @@ import { Offer } from './entities/offer.entity';
 import { RequestedService } from './entities/requested-service.entity';
 import { ServiceProviderJob } from './entities/service-provider-job.entity';
 import { UsersModule } from 'src/users/users.module';
+import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Offer, RequestedService, ServiceProviderJob]),
+    TypeOrmModule.forFeature([Offer, RequestedService, ServiceProviderJob, ServiceCategorySkill]),
     UsersModule,
   ],
   providers: [JobsService],
