@@ -6,11 +6,13 @@ import {
   JoinColumn,
   ManyToMany,
   JoinTable,
+  OneToMany,
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { IdType } from '../../common/enums/id-type.enum';
 import { VerificationStatus } from '../../common/enums/verification-status.enum';
 import { ServiceCategorySkill } from '../../categories/entities/service-category-skill.entity';
+import { Review } from '../../reviews/entities/review.entity';
 
 @Entity('service_providers')
 export class ServiceProvider extends SoftDeleteEntity {
@@ -73,11 +75,14 @@ export class ServiceProvider extends SoftDeleteEntity {
   @Column({ default: false })
   phoneNumberVerified: boolean;
 
-  @ManyToMany(() => ServiceCategorySkill)
+  @ManyToMany(() => ServiceCategorySkill, { cascade: true })
   @JoinTable({
     name: 'service_provider_skills',
     joinColumn: { name: 'service_provider_id' },
     inverseJoinColumn: { name: 'service_category_skill_id' },
   })
   skills: ServiceCategorySkill[];
+
+  @OneToMany(() => Review, (review) => review.serviceProvider)
+  reviews: Review[];
 }

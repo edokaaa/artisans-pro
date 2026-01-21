@@ -1,4 +1,13 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  Get,
+  ParseUUIDPipe,
+  Param,
+  Query,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -9,10 +18,15 @@ import { CreateClientDto } from './dto/create-client.dto';
 import { CreateServiceProviderDto } from './dto/create-service-provider.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { SearchProvidersDto } from './dto/search-providers.dto';
+import { ServiceProvidersService } from './service-provider.service';
 
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly serviceProviderService: ServiceProvidersService,
+  ) {}
 
   @Post('profile')
   @UseGuards(JwtAuthGuard)
@@ -58,5 +72,21 @@ export class UsersController {
   async createDemoUser(@Body() createUserDto: CreateUserDto) {
     const user = await this.usersService.createDemoUser(createUserDto);
     return user;
+  }
+
+  @Get('service-provider/by-skill/:skillId')
+  getBySkill(
+    @Param('skillId', ParseUUIDPipe) skillId: string,
+    @Query() query: SearchProvidersDto,
+  ) {
+    return this.serviceProviderService.findBySkillId(skillId, query);
+  }
+
+  @Get('service-provider/by-category/:categoryId')
+  getByCategory(
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Query() query: SearchProvidersDto,
+  ) {
+    return this.serviceProviderService.findByCategoryId(categoryId, query);
   }
 }
