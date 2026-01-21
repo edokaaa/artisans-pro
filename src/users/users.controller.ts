@@ -89,4 +89,9 @@ export class UsersController {
   ) {
     return this.serviceProviderService.findByCategoryId(categoryId, query);
   }
+
+  @Get('service-provider/:id')
+  getServiceProvider(@Param('id', ParseUUIDPipe) id: string) {
+    return this.serviceProviderService.getById(id);
+  }
 }

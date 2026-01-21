@@ -11,6 +11,42 @@ export class ServiceProvidersService {
   ) {}
 
   /**
+   * Get One Service Provider
+   */
+  async getById(id: string): Promise<ServiceProvider> {
+    const result = await this.providerRepo
+      .createQueryBuilder('provider')
+      .leftJoinAndSelect('provider.profile', 'profile')
+      .leftJoinAndSelect('provider.reviews', 'reviews')
+      .leftJoinAndSelect('reviews.reply', 'reply')
+      .leftJoinAndSelect('profile.user', 'user')
+      .addSelect(
+        (qb) =>
+          qb
+            .select(
+              'COALESCE(AVG(CAST(review.stars::text AS NUMERIC)), 0)',
+              'averageRating',
+            )
+            .from('reviews', 'review')
+            .where('review.service_provider_id = provider.id')
+            .andWhere('review.deletedAt IS NULL'),
+        'averageRating',
+      )
+      .where('provider.id = :id', { id })
+      .getRawAndEntities();
+
+    if (!result.entities.length) {
+      throw new Error('Service provider not found');
+    }
+
+    const provider = result.entities[0];
+    return {
+      ...provider,
+      averageRating: parseFloat(result.raw[0]?.averageRating) || 0,
+    };
+  }
+
+  /**
    * Find providers by skill ID
    */
   async findBySkillId(

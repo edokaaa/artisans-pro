@@ -85,4 +85,7 @@ export class ServiceProvider extends SoftDeleteEntity {
 
   @OneToMany(() => Review, (review) => review.serviceProvider)
   reviews: Review[];
+
+  // Virtual field - populated by query
+  averageRating?: number;
 }
