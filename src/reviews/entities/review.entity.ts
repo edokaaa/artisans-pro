@@ -4,6 +4,7 @@ import { ReviewStars } from '../../common/enums/review-stars.enum';
 import { Client } from '../../users/entities/client.entity';
 import { ServiceProvider } from '../../users/entities/service-provider.entity';
 import { RequestedService } from '../../jobs/entities/requested-service.entity';
+import { ReviewReply } from './review-reply.entity';
 
 @Entity('reviews')
 export class Review extends SoftDeleteEntity {
@@ -36,4 +37,8 @@ export class Review extends SoftDeleteEntity {
   @OneToOne(() => RequestedService)
   @JoinColumn({ name: 'requested_service_id' })
   requestedService: RequestedService;
+
+  @OneToOne(() => ReviewReply)
+  @JoinColumn({ name: 'reply_id' })
+  reply: ReviewReply;
 }
