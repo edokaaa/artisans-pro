@@ -1,0 +1,45 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.5-alpine
+    container_name: local_postgres
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: nest_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: pro_service
+    ports:
+      - '3000:3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      APP_PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: postgres
+      DB_PASSWORD: postgres
+      DB_NAME: nest_db
+      DB_LOGGING: 'true'
+      DB_SSL: 'false'
+      TYPEORM_LOGGING: 'false'
+      TYPEORM_MIGRATIONS_RUN: 'true'
+      RABBITMQ_URL: ${RABBITMQ_URL}
+      JWT_PUBLIC_KEY_PATH: /app/keys/public.pem
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

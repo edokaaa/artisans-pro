@@ -14,7 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      ignoreExpiration: configService.get('ENV') !== 'production',
+      ignoreExpiration: configService.get('NODE_ENV') !== 'production',
       algorithms: ['RS256'],
       secretOrKey: publicKey,
     });
