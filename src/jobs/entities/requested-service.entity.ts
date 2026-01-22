@@ -1,9 +1,9 @@
-// jobs/entities/requested-service.entity.ts
 import { Entity, Column, ManyToOne, JoinColumn, Index } from 'typeorm';
 import { ServiceProviderJob } from './service-provider-job.entity';
 import { BaseEntity } from '../../common/entities/base.entity';
 import { Client } from '../../users/entities/client.entity';
 import { RequestStatus } from '../../common/enums/request-status.enum';
+import { RescheduledStatus } from '../../common/enums/rescheduled-status.enum';
 
 @Entity('requested_services')
 export class RequestedService extends BaseEntity {
@@ -35,6 +35,13 @@ export class RequestedService extends BaseEntity {
 
   @Column({
     type: 'enum',
+    enum: RescheduledStatus,
+    default: RescheduledStatus.NAN,
+  })
+  rescheduledstatus?: RescheduledStatus;
+
+  @Column({
+    type: 'enum',
     enum: RequestStatus,
     default: RequestStatus.PENDING,
   })
@@ -54,4 +61,10 @@ export class RequestedService extends BaseEntity {
     type: 'Point';
     coordinates: [number, number]; // [longitude, latitude]
   };
+
+  @Column({ nullable: true })
+  city?: string;
+
+  @Column({ nullable: true })
+  state?: string;
 }

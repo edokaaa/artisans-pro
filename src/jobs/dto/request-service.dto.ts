@@ -1,4 +1,10 @@
-import { IsString, IsBoolean, IsLatitude, IsLongitude } from 'class-validator';
+import {
+  IsString,
+  IsBoolean,
+  IsLatitude,
+  IsLongitude,
+  IsOptional,
+} from 'class-validator';
 
 export class RequestServiceDto {
   @IsString()
@@ -7,15 +13,24 @@ export class RequestServiceDto {
   @IsString()
   description: string;
 
+  @IsString()
+  city: string;
+
+  @IsString()
+  state: string;
+
   @IsBoolean()
   isInstant: boolean;
 
+  @IsOptional()
   @IsLatitude()
-  latitude: number;
+  latitude?: number;
 
+  @IsOptional()
   @IsLongitude()
-  longitude: number;
+  longitude?: number;
 
   date: Date;
+
   timezone: string;
 }
