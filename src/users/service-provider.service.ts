@@ -114,7 +114,7 @@ export class ServiceProvidersService {
     return this.mapAverageRating(await qb.getRawAndEntities());
   }
 
-  async getWithJobs (providerId: string) {
+  async getWithJobs(providerId: string) {
     return await this.providerRepo.findOne({
       where: { id: providerId },
       relations: ['jobs'],

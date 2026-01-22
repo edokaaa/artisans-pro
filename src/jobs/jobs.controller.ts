@@ -14,11 +14,21 @@ import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 
 import { CreateJobDto } from './dto/create-job.dto';
 import { RequestServiceDto } from './dto/request-service.dto';
+import { RequestStatus } from 'src/common/enums/request-status.enum';
+import { Response } from 'src/common/utils/response';
+import { RescheduleDto } from './dto/reschedule.dto';
+import { RescheduledStatus } from 'src/common/enums/rescheduled-status.enum';
+import { ServiceRequestsService } from './service-requests.service';
+import { OffersService } from './offers.service';
 
 @Controller('jobs')
 @UseGuards(JwtAuthGuard)
 export class JobsController {
-  constructor(private readonly jobsService: JobsService) {}
+  constructor(
+    private readonly jobsService: JobsService,
+    private readonly offersService: OffersService,
+    private readonly requestsService: ServiceRequestsService,
+  ) {}
 
   @Post()
   createJob(@CurrentUser() user, @Body() dto: CreateJobDto) {
@@ -41,10 +51,91 @@ export class JobsController {
   }
 
   @Post('/request')
-  requestService(
+  requestService(@CurrentUser() user, @Body() dto: RequestServiceDto) {
+    return this.requestsService.requestService(user.id, dto);
+  }
+
+  @Post('/request/:id/accept')
+  async acceptRequest(@CurrentUser() user, @Param('id') requestId: string) {
+    await this.requestsService.updateRequestStatus(
+      user.id,
+      requestId,
+      RequestStatus.ACCEPTED,
+    );
+
+    return new Response('Job accepted Successfully');
+  }
+
+  @Post('/request/:id/reject')
+  async rejectRequest(@CurrentUser() user, @Param('id') requestId: string) {
+    await this.requestsService.updateRequestStatus(
+      user.id,
+      requestId,
+      RequestStatus.REJECTED,
+    );
+
+    return new Response('Job rejected Successfully');
+  }
+
+  @Post('/request/:id/reschedule')
+  async rescheduleRequest(
     @CurrentUser() user,
-    @Body() dto: RequestServiceDto,
+    @Param('id') requestId: string,
+    @Body() rescheduleDto: RescheduleDto,
   ) {
-    return this.jobsService.requestService(user.id, dto);
+    const rescheduleRequest = await this.requestsService.rescheduleRequest(
+      user.id,
+      requestId,
+      rescheduleDto,
+    );
+
+    return new Response('Reschedule request sent', rescheduleRequest);
+  }
+
+  @Get('/request/service-provider')
+  async getServiceProviderRequests(
+    @CurrentUser() user,
+    @Param('status') state: string,
+  ) {
+    const requests = await this.requestsService.findByServiceProviderId(
+      user.id,
+    );
+
+    return new Response('Success', requests);
+  }
+
+  @Get('/request/client')
+  async getClientRequests(@CurrentUser() user, @Param('status') state: string) {
+    const requests = await this.requestsService.getAllClientsRequest(user.id);
+
+    return new Response('Success', requests);
+  }
+
+  @Post('/request/:id/reschedule/accept')
+  async acceptRescheduleRequest(
+    @CurrentUser() user,
+    @Param('id') requestId: string,
+  ) {
+    const request = await this.requestsService.acceptOrRejectRescheduleRequest(
+      user.id,
+      requestId,
+      RescheduledStatus.ACCEPTED,
+    );
+
+    return new Response('Successful', request);
+  }
+
+  @Post('/request/:id/reschedule/reject')
+  async rejectRescheduleRequest(
+    @CurrentUser() user,
+    @Param('id') requestId: string,
+  ) {
+    const request = await this.requestsService.acceptOrRejectRescheduleRequest(
+      user.id,
+      requestId,
+      RescheduledStatus.REJECTED,
+    );
+
+    return new Response('Successful', request);
   }
 }

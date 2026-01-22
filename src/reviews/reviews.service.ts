@@ -8,12 +8,11 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
 import { UsersService } from 'src/users/users.service';
-import { JobsService } from 'src/jobs/jobs.service';
 
 import { Review } from './entities/review.entity';
 import { ReviewReply } from './entities/review-reply.entity';
 
-import { RequestStatus } from 'src/common/enums/request-status.enum';
+import { ServiceRequestsService } from 'src/jobs/service-requests.service';
 
 @Injectable()
 export class ReviewsService {
@@ -25,7 +24,7 @@ export class ReviewsService {
     private readonly replyRepo: Repository<ReviewReply>,
 
     private readonly usersService: UsersService,
-    private readonly jobsService: JobsService,
+    private readonly requestsService: ServiceRequestsService,
   ) {}
 
   /* ----------------------------------------
@@ -47,7 +46,7 @@ export class ReviewsService {
   ): Promise<Review> {
     const client = await this.usersService.assertClient(userId);
 
-    const request = await this.jobsService.getCompletedRequestForReview(
+    const request = await this.requestsService.getCompletedRequestForReview(
       payload.requestedServiceId,
       userId,
     );

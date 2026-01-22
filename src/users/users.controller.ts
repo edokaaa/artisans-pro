@@ -98,9 +98,17 @@ export class UsersController {
   }
 
   @Post('service-provider/:id/verify')
-  verifyServiceProvider(@Param('id', ParseUUIDPipe) id: string, @Body() request: VerifyServiceProviderDto) {
+  verifyServiceProvider(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() request: VerifyServiceProviderDto,
+  ) {
     const role: Role = Role.ADMIN; // TODO: Get role from jwt
-    return this.usersService.verifyServiceProvider(id, request.status, request.failureReason, role)
+    return this.usersService.verifyServiceProvider(
+      id,
+      request.status,
+      request.failureReason,
+      role,
+    );
   }
 
   @Get('profile')
