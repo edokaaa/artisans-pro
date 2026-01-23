@@ -13,6 +13,8 @@ import { Review } from './entities/review.entity';
 import { ReviewReply } from './entities/review-reply.entity';
 
 import { ServiceRequestsService } from 'src/jobs/service-requests.service';
+import { CreateReportDto } from './dto/create-report.dto';
+import { Report } from './entities/report.entity';
 
 @Injectable()
 export class ReviewsService {
@@ -22,6 +24,9 @@ export class ReviewsService {
 
     @InjectRepository(ReviewReply)
     private readonly replyRepo: Repository<ReviewReply>,
+
+    @InjectRepository(Report)
+    private readonly reportRepo: Repository<Report>,
 
     private readonly usersService: UsersService,
     private readonly requestsService: ServiceRequestsService,
@@ -111,6 +116,30 @@ export class ReviewsService {
     });
 
     return this.replyRepo.save(reply);
+  }
+  /**
+   * Report
+   */
+
+  async reportServiceProvider(
+    clientUserId: string,
+    data: CreateReportDto,
+  ): Promise<Report> {
+    const client = await this.usersService.assertClient(clientUserId);
+
+    return this.reportRepo.create({
+      comment: data.comment,
+      client: { id: client.id },
+      serviceProvider: { id: data.serviceProviderId },
+    });
+  }
+
+  async getServiceProviderReports(
+    serviceProviderId: string,
+  ): Promise<Report[]> {
+    return await this.reportRepo.find({
+      where: { serviceProvider: { id: serviceProviderId } },
+    });
   }
 
   /* ----------------------------------------

@@ -10,7 +10,7 @@ import { JobsModule } from 'src/jobs/jobs.module';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Report, Review, ReviewReply]),
+    TypeOrmModule.forFeature([Report, Review, ReviewReply, Report]),
     UsersModule,
     JobsModule,
   ],

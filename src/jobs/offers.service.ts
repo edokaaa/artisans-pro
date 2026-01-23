@@ -22,14 +22,11 @@ export class OffersService {
 
   async createOffer(userId: string, data: CreateOfferDto): Promise<Offer> {
     const client = await this.usersService.assertClient(userId);
-    const serviceProvider = await this.usersService.getServiceProviderById(
-      data.serviceProviderId,
-    );
 
     const offer = this.offerRepo.create({
       ...data,
-      client,
-      serviceProvider,
+      client: { id: client.id },
+      serviceProvider: { id: data.serviceProviderId },
       status: OfferStatus.PENDING,
     });
 

@@ -249,8 +249,8 @@ export class ServiceRequestsService {
         'client',
         'client.profile',
         'client.profile.user',
-        'serviceProviderJob',
-        'serviceProviderJob.serviceProvider',
+        'job',
+        'job.serviceProvider',
       ],
     });
 
