@@ -9,6 +9,7 @@ import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
 import { Offer } from './entities/offer.entity';
 import { OfferStatus } from 'src/common/enums/offer-status.enum';
+import { CreateOfferDto } from './dto/create-offer.dto';
 
 @Injectable()
 export class OffersService {
@@ -19,15 +20,20 @@ export class OffersService {
     private readonly usersService: UsersService,
   ) {}
 
-  async createOffer(userId: string, data: Partial<Offer>): Promise<Offer> {
+  async createOffer(userId: string, data: CreateOfferDto): Promise<Offer> {
     const client = await this.usersService.assertClient(userId);
+    const serviceProvider = await this.usersService.getServiceProviderById(
+      data.serviceProviderId,
+    );
 
     const offer = this.offerRepo.create({
       ...data,
       client,
+      serviceProvider,
       status: OfferStatus.PENDING,
     });
 
+    // TODO: Activity (new offer)
     return this.offerRepo.save(offer);
   }
 
@@ -55,6 +61,12 @@ export class OffersService {
     }
 
     offer.status = status;
+    // TODO: Activity (make payment - client)
     return this.offerRepo.save(offer);
+  }
+
+  async makePayment(offerId: string) {
+    // TODO: pending
+    throw new BadRequestException('Feature pending');
   }
 }

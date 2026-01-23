@@ -20,6 +20,10 @@ import { RescheduleDto } from './dto/reschedule.dto';
 import { RescheduledStatus } from 'src/common/enums/rescheduled-status.enum';
 import { ServiceRequestsService } from './service-requests.service';
 import { OffersService } from './offers.service';
+import { Offer } from './entities/offer.entity';
+import { CreateOfferDto } from './dto/create-offer.dto';
+import { User } from 'src/users/entities/user.entity';
+import { UpdateOfferStatusDto } from './dto/update-offer-status.dto';
 
 @Controller('jobs')
 @UseGuards(JwtAuthGuard)
@@ -137,5 +141,44 @@ export class JobsController {
     );
 
     return new Response('Successful', request);
+  }
+
+  /**
+   * OFFERS
+   */
+
+  @Post('/offers')
+  async createOffer(
+    @CurrentUser() user: User,
+    @Body() offerDto: CreateOfferDto,
+  ): Promise<Response> {
+    const response = await this.offersService.createOffer(user.id, offerDto);
+
+    return new Response('success', response);
+  }
+
+  @Post('/offers/:offerId/respond')
+  async respondToOffer(
+    @CurrentUser() user: User,
+    @Param('offerId') offerId: string,
+    @Body() { status }: UpdateOfferStatusDto,
+  ): Promise<Response> {
+    const response = await this.offersService.respondToOffer(
+      user.id,
+      offerId,
+      status,
+    );
+
+    return new Response('success', response);
+  }
+
+  @Post('/offers/:offerId/make-payment')
+  async makeOfferPayment(
+    @CurrentUser() user: User,
+    @Param('offerId') offerId: string,
+  ): Promise<Response> {
+    const response = await this.offersService.makePayment(offerId);
+
+    return new Response('success', response);
   }
 }

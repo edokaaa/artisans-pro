@@ -3,5 +3,5 @@ import { OfferStatus } from 'src/common/enums/offer-status.enum';
 
 export class UpdateOfferStatusDto {
   @IsEnum(OfferStatus)
-  status: OfferStatus;
+  status: OfferStatus.ACCEPTED | OfferStatus.DECLINED;
 }

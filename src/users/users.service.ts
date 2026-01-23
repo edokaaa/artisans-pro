@@ -184,6 +184,14 @@ export class UsersService {
     return provider;
   }
 
+  async getServiceProviderById(providerId: string): Promise<ServiceProvider> {
+    const provider = await this.providerRepo.findOneByOrFail({
+      id: providerId,
+    });
+
+    return provider;
+  }
+
   async getServiceProviderByUser(userId: string): Promise<ServiceProvider> {
     const profile = await this.getProfileByUserId(userId);
 
