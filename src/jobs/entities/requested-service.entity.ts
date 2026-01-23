@@ -7,6 +7,7 @@ import { RescheduledStatus } from '../../common/enums/rescheduled-status.enum';
 
 @Entity('requested_services')
 export class RequestedService extends BaseEntity {
+  @Index('idx_requested_services_job', { synchronize: false })
   @ManyToOne(() => ServiceProviderJob)
   @JoinColumn({ name: 'service_provider_job_id' })
   job: ServiceProviderJob;
@@ -38,8 +39,9 @@ export class RequestedService extends BaseEntity {
     enum: RescheduledStatus,
     default: RescheduledStatus.NAN,
   })
-  rescheduledstatus?: RescheduledStatus;
+  rescheduledStatus?: RescheduledStatus;
 
+  @Index('idx_requested_services_status', { synchronize: false })
   @Column({
     type: 'enum',
     enum: RequestStatus,

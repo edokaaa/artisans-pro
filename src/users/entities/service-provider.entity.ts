@@ -7,6 +7,7 @@ import {
   ManyToMany,
   JoinTable,
   OneToMany,
+  Index,
 } from 'typeorm';
 import { Profile } from './profile.entity';
 import { IdType } from '../../common/enums/id-type.enum';
@@ -15,6 +16,8 @@ import { ServiceCategorySkill } from '../../categories/entities/service-category
 import { Review } from '../../reviews/entities/review.entity';
 import { ServiceProviderJob } from '../../jobs/entities/service-provider-job.entity';
 
+@Index('idx_provider_available_verified', ['available', 'verificationStatus'])
+@Index('idx_provider_state_city', ['state', 'city'])
 @Entity('service_providers')
 export class ServiceProvider extends SoftDeleteEntity {
   @OneToOne(() => Profile, { eager: true })
@@ -76,6 +79,7 @@ export class ServiceProvider extends SoftDeleteEntity {
   @Column({ default: false })
   phoneNumberVerified: boolean;
 
+  @Index('idx_sps_provider_skill', { synchronize: false })
   @ManyToMany(() => ServiceCategorySkill, { cascade: true })
   @JoinTable({
     name: 'service_provider_skills',

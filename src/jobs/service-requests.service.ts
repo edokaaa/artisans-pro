@@ -78,7 +78,7 @@ export class ServiceRequestsService {
     request.isRescheduled = true;
     request.rescheduledDate = rescheduleDto.rescheduledDateTime;
     request.rescheduledReason = rescheduleDto.reason;
-    request.rescheduledstatus = RescheduledStatus.REQUESTED;
+    request.rescheduledStatus = RescheduledStatus.REQUESTED;
     this.requestRepo.save(request);
     // TODO: Activity (rescheduled request)
     return request;
@@ -91,7 +91,7 @@ export class ServiceRequestsService {
   ): Promise<RequestedService> {
     const request = await this.getClientsRequest(clientUserId, requestId);
 
-    request.rescheduledstatus = status;
+    request.rescheduledStatus = status;
     request.status = RequestStatus.CANCELED;
     request.cancellationReason = 'reschedule rejected';
     this.requestRepo.save(request);
