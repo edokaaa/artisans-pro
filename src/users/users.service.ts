@@ -17,6 +17,7 @@ import { Role } from 'src/common/enums/roles.enum';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateServiceProviderDto } from './dto/create-service-provider.dto';
 import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
+import { UpdateServiceProviderDto } from './dto/update-service-provider.dto';
 
 @Injectable()
 export class UsersService {
@@ -145,14 +146,8 @@ export class UsersService {
 
     // Fetch skills if skillIds are provided
     let skills: ServiceCategorySkill[] = [];
-    if (data.skillIds && data.skillIds.length > 0) {
-      skills = await this.skillRepo.find({
-        where: { id: In(data.skillIds) },
-      });
-
-      if (skills.length !== data.skillIds.length) {
-        throw new BadRequestException('Some skills not found');
-      }
+    if (data.skillIds) {
+      skills = await this.validateProviderSkills(data.skillIds);
     }
 
     const provider = this.providerRepo.create({
@@ -164,6 +159,23 @@ export class UsersService {
     });
 
     return this.providerRepo.save(provider);
+  }
+  async validateProviderSkills(
+    skillIds: string[],
+  ): Promise<ServiceCategorySkill[]> {
+    // Fetch skills if skillIds are provided
+    let skills: ServiceCategorySkill[] = [];
+    if (skillIds && skillIds.length > 0) {
+      skills = await this.skillRepo.find({
+        where: { id: In(skillIds) },
+      });
+
+      if (skills.length !== skillIds.length) {
+        throw new BadRequestException('Some skills not found');
+      }
+    }
+
+    return skills;
   }
 
   async assertServiceProvider(userId: string): Promise<ServiceProvider> {
@@ -204,6 +216,27 @@ export class UsersService {
     }
 
     return provider;
+  }
+
+  async updateServiceProvider(
+    providerUserId: string,
+    dto: UpdateServiceProviderDto,
+  ): Promise<ServiceProvider> {
+    const serviceProvider = await this.providerRepo.findOne({
+      where: { profile: { user: { id: providerUserId } } },
+    });
+    if (!serviceProvider)
+      throw new NotFoundException('Service provider not found');
+
+    let skills: ServiceCategorySkill[] = [];
+    if (dto.skillIds) {
+      skills = await this.validateProviderSkills(dto.skillIds);
+    }
+
+    Object.assign(serviceProvider, dto);
+    serviceProvider.skills = skills;
+
+    return this.providerRepo.save(serviceProvider);
   }
 
   /* -----------------------------------------

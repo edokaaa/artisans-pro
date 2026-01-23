@@ -7,6 +7,7 @@ import {
   ParseUUIDPipe,
   Param,
   Query,
+  Patch,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
@@ -22,6 +23,7 @@ import { SearchProvidersDto } from './dto/search-providers.dto';
 import { ServiceProvidersService } from './service-provider.service';
 import { VerifyServiceProviderDto } from './dto/verify-service-provider.dto';
 import { Role } from 'src/common/enums/roles.enum';
+import { UpdateServiceProviderDto } from './dto/update-service-provider.dto';
 
 @Controller('users')
 export class UsersController {
@@ -115,5 +117,14 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   getUserProfile(@CurrentUser() user: User) {
     return this.usersService.getProfileByUserId(user.id);
+  }
+
+  @Patch('/service-provider')
+  @UseGuards(JwtAuthGuard)
+  updateServiceProvider(
+    @CurrentUser() user: User,
+    @Body() updateDto: UpdateServiceProviderDto,
+  ) {
+    return this.usersService.updateServiceProvider(user.id, updateDto);
   }
 }
