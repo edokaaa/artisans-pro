@@ -20,11 +20,11 @@ import { ServiceCategorySkill } from 'src/categories/entities/service-category-s
       ServiceProvider,
       ServiceCategorySkill,
     ]),
-    // MessagingModule,
+    MessagingModule,
   ],
   controllers: [UsersController],
   providers: [
-    // UserEventsConsumer,
+    UserEventsConsumer,
     UsersService,
     ServiceProvidersService,
   ],

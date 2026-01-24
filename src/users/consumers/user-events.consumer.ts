@@ -1,9 +1,9 @@
-// users/consumers/user-events.consumer.ts
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { DataSource } from 'typeorm';
 import { RabbitMQService } from 'src/messaging/rabbitmq.service';
 import { User } from '../entities/user.entity';
 import { UserEventPayload } from '../interfaces/user-event.interface';
+import 'dotenv/config';
 
 @Injectable()
 export class UserEventsConsumer implements OnModuleInit {
@@ -17,8 +17,8 @@ export class UserEventsConsumer implements OnModuleInit {
   async onModuleInit() {
     const channel = await this.rabbitMQService.connect();
 
-    const exchange = 'user_service_exchange';
-    const queue = 'user_service_queue';
+    const exchange = process.env.RABBITMQ_EXCHANGE;
+    const queue = process.env.RABBITMQ_QUEUE;
     const routingKeys = ['user.created', 'user.updated'];
 
     await channel.assertExchange(exchange, 'topic', { durable: true });
@@ -40,7 +40,7 @@ export class UserEventsConsumer implements OnModuleInit {
       const routingKey = msg.fields.routingKey;
       const payload: UserEventPayload = JSON.parse(msg.content.toString());
 
-      if (!payload?.id) {
+      if (!payload?.user?.id) {
         throw new Error('Invalid user event payload');
       }
 
@@ -59,15 +59,17 @@ export class UserEventsConsumer implements OnModuleInit {
     }
   }
 
-  private async upsertUser(payload: UserEventPayload) {
+  private async upsertUser({ user }: UserEventPayload) {
     const repo = this.dataSource.getRepository(User);
 
     await repo.save({
-      id: payload.id,
-      email: payload.email,
-      firstName: payload.firstName,
-      lastName: payload.lastName,
-      lastSyncedAt: new Date(payload.updatedAt),
+      id: user.id,
+      email: user.email,
+      firstName: user.first_name,
+      lastName: user.last_name,
+      lastSyncedAt: new Date(),
     });
+
+    this.logger.log('New User processed successfully');
   }
 }
