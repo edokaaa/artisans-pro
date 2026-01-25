@@ -4,4 +4,6 @@ export enum OfferStatus {
   DECLINED = 'declined',
   PENDING_PAYMENT = 'pending_payment',
   PAYMENT_MADE = 'payment_made',
+  COMPLETED = 'completed',
+  CANCELLED = 'cancelled',
 }

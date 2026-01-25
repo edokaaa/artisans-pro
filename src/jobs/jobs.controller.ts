@@ -24,8 +24,10 @@ import { Offer } from './entities/offer.entity';
 import { CreateOfferDto } from './dto/create-offer.dto';
 import { User } from 'src/users/entities/user.entity';
 import { UpdateOfferStatusDto } from './dto/update-offer-status.dto';
+import { SubscriptionGuard } from 'src/subscriptions/guards/subscription.guard';
 
 @Controller('jobs')
+@UseGuards(JwtAuthGuard)
 @UseGuards(JwtAuthGuard)
 export class JobsController {
   constructor(
@@ -35,6 +37,7 @@ export class JobsController {
   ) {}
 
   @Post()
+  @UseGuards(SubscriptionGuard)
   createJob(@CurrentUser() user, @Body() dto: CreateJobDto) {
     return this.jobsService.createProviderJob(user.id, dto);
   }
@@ -45,11 +48,13 @@ export class JobsController {
   }
 
   @Patch(':id/activate')
+  @UseGuards(SubscriptionGuard)
   activateJob(@CurrentUser() user, @Param('id') jobId: string) {
     return this.jobsService.activateDeactivateJob(user.id, jobId, 'activate');
   }
 
   @Patch(':id/deactivate')
+  @UseGuards(SubscriptionGuard)
   deactivateJob(@CurrentUser() user, @Param('id') jobId: string) {
     return this.jobsService.activateDeactivateJob(user.id, jobId, 'deactivate');
   }
@@ -157,7 +162,8 @@ export class JobsController {
     return new Response('success', response);
   }
 
-  @Post('/offers/:offerId/respond')
+  @Patch('/offers/:offerId/respond')
+  @UseGuards(SubscriptionGuard)
   async respondToOffer(
     @CurrentUser() user: User,
     @Param('offerId') offerId: string,

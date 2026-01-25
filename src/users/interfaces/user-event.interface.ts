@@ -2,7 +2,6 @@ export interface UserEventPayload {
   user: EventUser;
 }
 
-
 export interface EventUser {
   id: string;
   first_name: string;

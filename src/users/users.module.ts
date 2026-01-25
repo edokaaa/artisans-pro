@@ -23,11 +23,7 @@ import { ServiceCategorySkill } from 'src/categories/entities/service-category-s
     MessagingModule,
   ],
   controllers: [UsersController],
-  providers: [
-    UserEventsConsumer,
-    UsersService,
-    ServiceProvidersService,
-  ],
+  providers: [UserEventsConsumer, UsersService, ServiceProvidersService],
   exports: [UsersService, ServiceProvidersService],
 })
 export class UsersModule {}

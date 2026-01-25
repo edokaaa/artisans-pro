@@ -25,6 +25,16 @@ export class Offer extends SoftDeleteEntity {
   })
   status: OfferStatus;
 
+  @Column({
+    nullable: true,
+  })
+  escrowStatus?: string;
+
+  @Column({
+    nullable: true,
+  })
+  cancellationReason?: string;
+
   @ManyToOne(() => Client)
   @JoinColumn({ name: 'client_id' })
   client: Client;

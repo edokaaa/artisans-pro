@@ -9,6 +9,7 @@ import { UsersModule } from 'src/users/users.module';
 import { ServiceCategorySkill } from 'src/categories/entities/service-category-skill.entity';
 import { OffersService } from './offers.service';
 import { ServiceRequestsService } from './service-requests.service';
+import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ServiceRequestsService } from './service-requests.service';
       ServiceCategorySkill,
     ]),
     UsersModule,
+    SubscriptionsModule,
   ],
   providers: [JobsService, OffersService, ServiceRequestsService],
   exports: [JobsService, OffersService, ServiceRequestsService],

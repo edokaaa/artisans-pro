@@ -66,4 +66,63 @@ export class OffersService {
     // TODO: pending
     throw new BadRequestException('Feature pending');
   }
+
+  /* -----------------------------
+   * Payment success handler
+   * (called by RabbitMQ consumer)
+   * ----------------------------- */
+  async markOfferAsPaid(offerId: string, useEscrow: boolean) {
+    const offer = await this.offerRepo.findOne({
+      where: { id: offerId },
+    });
+
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+
+    if (offer.status === OfferStatus.PAYMENT_MADE) {
+      return offer; // idempotent
+    }
+
+    offer.status = OfferStatus.PAYMENT_MADE;
+    offer.useEscrow = useEscrow;
+
+    if (useEscrow) {
+      offer.escrowStatus = 'held';
+    }
+
+    return this.offerRepo.save(offer);
+  }
+
+  /* -----------------------------
+   * Job completed → release escrow
+   * ----------------------------- */
+  async releaseEscrow(offerId: string) {
+    const offer = await this.offerRepo.findOne({
+      where: { id: offerId },
+    });
+
+    if (!offer || !offer.useEscrow) return;
+
+    offer.escrowStatus = 'released';
+    return this.offerRepo.save(offer);
+  }
+
+  /* -----------------------------
+   * Admin / system cancel
+   * ----------------------------- */
+  async cancelOffer(offerId: string, reason?: string) {
+    const offer = await this.offerRepo.findOne({
+      where: { id: offerId },
+    });
+
+    if (!offer) {
+      throw new NotFoundException();
+    }
+
+    offer.status = OfferStatus.CANCELLED;
+    offer.cancellationReason = reason;
+
+    return this.offerRepo.save(offer);
+  }
 }
