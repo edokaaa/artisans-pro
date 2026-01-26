@@ -1,98 +1,339 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Pro Service
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based microservice for managing service providers, categories, skills, reviews, payments and subscriptions. Features geolocation-based provider discovery, JWT authentication, and RabbitMQ event messaging.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech Stack
 
-## Description
+- **Runtime**: Node.js 20 (Alpine)
+- **Framework**: NestJS 11
+- **Database**: PostgreSQL 16 with PostGIS extension
+- **ORM**: TypeORM
+- **Authentication**: Passport JWT
+- **Message Queue**: RabbitMQ
+- **Containerization**: Docker & Docker Compose
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Project Features
 
-## Project setup
+- ✅ Service provider management with verification status
+- ✅ Geolocation-based provider discovery (PostGIS)
+- ✅ Skill-to-category mapping
+- ✅ Review system with star ratings and provider averages
+- ✅ Soft delete support for data integrity
+- ✅ JWT-based authentication with role-based access
+- ✅ RabbitMQ integration for async operations
+- ✅ Database migrations with TypeORM
 
-```bash
-$ npm install
-```
+---
 
-## Compile and run the project
+## Development Setup
 
-```bash
-# development
-$ npm run start
+### Prerequisites
 
-# watch mode
-$ npm run start:dev
+- Node.js 20+
+- PostgreSQL 16 with PostGIS
+- Docker & Docker Compose (optional, for database)
 
-# production mode
-$ npm run start:prod
-```
-
-## Run tests
+### Installation
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# Install dependencies
+npm install
 ```
 
-## Deployment
+### Environment Configuration
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file in the project root:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+APP_ENV=staging
+PORT=3000
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=postgres
+DB_NAME=nest_db
+DB_LOGGING=true
+TYPEORM_LOGGING=false
+TYPEORM_MIGRATIONS_RUN=true
+RABBITMQ_URL=amqps://user:password@broker.example.com/vhost
+RABBITMQ_EXCHANGE=exchange_name
+RABBITMQ_QUEUE=default
+PAYMENT_SERVICE_BASE_URL=
+JWT_PUBLIC_KEY_PATH=./keys/public.pem
+```
+
+### Database Setup (Development)
+
+Start PostgreSQL with PostGIS:
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Using Docker Compose (recommended)
+docker compose -f docker-compose-dev.yaml up postgres adminer
+
+# Or start with just postgres service
+docker compose -f docker-compose-dev.yaml up postgres
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Access Adminer (database UI): http://localhost:8080
 
-## Resources
+### Run Migrations
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+# Generate new migration
+MIGRATION_NAME=YourMigrationName npm run migration:generate
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+# Run pending migrations
+npm run migration:run-dev
 
-## Support
+# Revert last migration
+npm run migration:revert
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### Run the Application
 
-## Stay in touch
+```bash
+# Development mode (watch)
+npm run start:dev
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+# Debug mode
+npm run start:debug
+
+# Production build
+npm run build
+npm run start:prod
+```
+
+The API will be available at `http://localhost:3000`
+
+---
+
+## Production Setup (Docker)
+
+### Build and Run
+
+```bash
+# Build image and start all services
+docker compose -f docker-compose.yaml up --build
+
+# Run in background
+docker compose -f docker-compose.yaml up -d --build
+
+# Stop services
+docker compose -f docker-compose.yaml down
+
+# View logs
+docker compose -f docker-compose.yaml logs -f app
+```
+
+### Environment Variables
+
+The production Docker setup uses environment variables from your `.env` file:
+
+```bash
+# Required for RabbitMQ
+RABBITMQ_URL=amqps://user:password@broker.example.com/vhost
+```
+
+### What Happens on Docker Start
+
+1. **PostgreSQL** starts with PostGIS extension
+2. **Health check** waits for PostgreSQL to be ready
+3. **Adminer** (optional database UI) starts
+4. **App service**:
+   - Waits for PostgreSQL health check
+   - Runs pending migrations automatically
+   - Starts the NestJS application
+
+### Accessing Services
+
+- **API**: http://localhost:3000
+- **Database UI (Adminer)**: http://localhost:8080
+- **Database**: localhost:5432
+
+---
+
+## Testing
+
+```bash
+# Unit tests
+npm run test
+
+# Watch mode
+npm run test:watch
+
+# Coverage report
+npm run test:cov
+
+# E2E tests
+npm run test:e2e
+```
+
+---
+
+## Code Quality
+
+```bash
+# Format code
+npm run format
+
+# Lint code
+npm run lint
+```
+
+---
+
+## Database Migrations
+
+### Generate Migration (Dev Only)
+
+```bash
+MIGRATION_NAME=CreateUsersTable npm run migration:generate
+```
+
+This analyzes your entities and generates SQL based on changes.
+
+### Run Migrations
+
+```bash
+# Development
+npm run migration:run-dev
+
+# Production (uses compiled dist)
+npm run migration:run
+
+# Docker automatically runs on startup
+```
+
+### Revert Migration (Dev only)
+
+```bash
+npm run migration:revert
+```
+
+---
+
+## Project Structure
+
+```
+src/
+├── auth/              # Authentication & authorization
+│   ├── decorators/
+│   ├── guards/
+│   └── strategies/
+├── categories/        # Service categories & skills
+│   ├── dto/
+│   ├── entities/
+│   └── services/
+├── common/           # Shared utilities, enums, decorators
+│   ├── decorators/
+│   ├── entities/
+│   ├── enums/
+│   └── utils/
+├── config/           # Configuration files
+├── database/         # TypeORM setup & migrations
+│   ├── migrations/
+│   └── seeders/
+├── jobs/             # Job & service request management
+├── messaging/        # RabbitMQ integration
+├── payments/          # Payment management
+├── reviews/          # Review & rating system
+├── subscriptions/     # Subscriptions system
+├── users/            # User, client, service provider management
+├── app.module.ts     # Root module
+└── main.ts          # Application entry point
+```
+
+---
+
+## API Documentation
+
+### Key Endpoints
+
+#### Service Providers
+
+```
+GET    /users/service-provider/by-skill/:skillId
+GET    /users/service-provider/by-category/:categoryId
+GET    /users/service-provider/:id
+POST   /users/service-provider
+```
+
+#### Query Parameters
+
+```
+?state=Lagos&city=Ikeja&latitude=6.557&longitude=3.396
+```
+
+Supports filtering by location (state/city) and distance-based sorting.
+
+#### Categories
+
+```
+GET    /categories
+POST   /categories
+```
+
+#### Reviews
+
+```
+POST   /reviews
+GET    /reviews/:providerId
+```
+
+---
+
+## Troubleshooting
+
+### Port Already in Use
+
+```bash
+# Find process using port 3000
+lsof -i :3000
+
+# Kill process
+kill -9 <PID>
+```
+
+### Database Connection Issues
+
+```bash
+# Check PostgreSQL is running
+docker compose -f docker-compose.yaml ps
+
+# View database logs
+docker compose -f docker-compose.yaml logs postgres
+
+# Restart services
+docker compose -f docker-compose.yaml restart
+```
+
+### Migration Failures
+
+```bash
+# Clear and rebuild
+docker compose -f docker-compose.yaml down -v
+docker compose -f docker-compose.yaml up --build
+```
+
+---
+
+## Performance Notes
+
+- DISTINCT ON with geolocation queries requires proper indexing
+- Average rating calculations use aggregation subqueries
+- Profile location uses PostGIS geography type for accuracy
+- Soft deletes filter deleted records in queries
+
+---
+
+## Support & Documentation
+
+- [NestJS Documentation](https://docs.nestjs.com)
+- [TypeORM Documentation](https://typeorm.io)
+- [PostGIS Documentation](https://postgis.net)
+
+---
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+MIT
