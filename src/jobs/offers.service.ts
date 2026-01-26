@@ -106,27 +106,6 @@ export class OffersService {
   }
 
   /* -----------------------------
-   * Payment success handler
-   * (called by RabbitMQ consumer)
-   * ----------------------------- */
-  async markOfferAsPaid(offerId: string, useEscrow: boolean) {
-    const offer = await this.get(offerId);
-
-    if (offer.status === OfferStatus.PAYMENT_MADE) {
-      return offer; // idempotent
-    }
-
-    offer.status = OfferStatus.PAYMENT_MADE;
-    offer.useEscrow = useEscrow;
-
-    if (useEscrow) {
-      offer.escrowStatus = 'held';
-    }
-
-    return this.offerRepo.save(offer);
-  }
-
-  /* -----------------------------
    * Job completed → release escrow
    * ----------------------------- */
   async releaseEscrow(offerId: string) {

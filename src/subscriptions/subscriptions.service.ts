@@ -11,6 +11,10 @@ import {
 } from './entities/subscription.entity';
 import { SubscriptionPlan } from './entities/subscription-plan.entity';
 import { ServiceProvider } from 'src/users/entities/service-provider.entity';
+import { InitiateTransactionDto } from 'src/payments/dto/initiate-transaction.dto';
+import { PaymentPurpose } from 'src/payments/entities/payment.entity';
+import { PaymentsService } from 'src/payments/payments.service';
+import { UsersService } from 'src/users/users.service';
 
 @Injectable()
 export class SubscriptionsService {
@@ -22,6 +26,10 @@ export class SubscriptionsService {
     private readonly planRepo: Repository<SubscriptionPlan>,
     @InjectRepository(ServiceProvider)
     private readonly providerRepo: Repository<ServiceProvider>,
+
+    private readonly paymentsService: PaymentsService,
+
+    private readonly usersService: UsersService,
   ) {}
 
   async findAll() {
@@ -41,7 +49,11 @@ export class SubscriptionsService {
   /* -----------------------------
    * Creation (before payment)
    * ----------------------------- */
-  async createSubscription(providerUserId: string, planId: string) {
+  async createSubscription(
+    providerUserId: string,
+    planId: string,
+    authToken: string,
+  ) {
     const plan = await this.planRepo.findOne({
       where: { id: planId, isActive: true },
     });
@@ -49,9 +61,8 @@ export class SubscriptionsService {
       throw new NotFoundException('Plan not found');
     }
 
-    const serviceProvider = await this.providerRepo.findOne({
-      where: { profile: { user: { id: providerUserId } } },
-    });
+    const serviceProvider =
+      await this.usersService.assertServiceProvider(providerUserId);
 
     if (!serviceProvider) {
       throw new NotFoundException('Plan not found');
@@ -63,36 +74,19 @@ export class SubscriptionsService {
       status: SubscriptionStatus.PENDING,
     });
 
-    return this.subscriptionRepo.save(subscription);
-  }
+    const sub = await this.subscriptionRepo.save(subscription);
 
-  /* -----------------------------
-   * Activation (payment success)
-   * ----------------------------- */
-  async activateSubscription(subscriptionId: string, sessionId: string) {
-    const subscription = await this.subscriptionRepo.findOne({
-      where: { id: subscriptionId },
-      relations: ['plan'],
-    });
-
-    if (!subscription) {
-      throw new NotFoundException('Subscription not found');
-    }
-
-    if (subscription.status === SubscriptionStatus.ACTIVE) {
-      return subscription; // idempotent
-    }
-
-    const now = new Date();
-    const endsAt = new Date(now);
-    endsAt.setMonth(endsAt.getMonth() + 1);
-
-    subscription.status = SubscriptionStatus.ACTIVE;
-    subscription.startsAt = now;
-    subscription.endsAt = endsAt;
-    subscription.paymentSessionId = sessionId;
-
-    return this.subscriptionRepo.save(subscription);
+    // make payment
+    const payload: InitiateTransactionDto = {
+      amount: plan.price,
+      userId: providerUserId,
+      subscriptionId: sub.id,
+      subscriptionPlanName: plan.name,
+      purpose: PaymentPurpose.SUBSCRIPTION,
+      authToken,
+    };
+    // make payment
+    return await this.paymentsService.initiateTransaction(payload);
   }
 
   /* -----------------------------

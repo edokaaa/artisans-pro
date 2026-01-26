@@ -52,8 +52,8 @@ export class PaymentsService {
         payload: {
           offerId: payload.offerId,
           offerName: payload.offerName,
-          subcriptionId: payload.subscriptionId,
-          subcriptionPlanName: payload.subscriptionPlanName,
+          subscriptionId: payload.subscriptionId,
+          subscriptionPlanName: payload.subscriptionPlanName,
           amount: payload.amount,
         },
       };

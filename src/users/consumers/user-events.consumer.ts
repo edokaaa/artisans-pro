@@ -18,7 +18,7 @@ export class UserEventsConsumer implements OnModuleInit {
     const channel = await this.rabbitMQService.connect();
 
     const exchange = process.env.RABBITMQ_EXCHANGE;
-    const queue = process.env.RABBITMQ_QUEUE;
+    const queue = 'default';
     const routingKeys = ['user.created', 'user.updated'];
 
     await channel.assertExchange(exchange, 'topic', { durable: true });

@@ -12,13 +12,16 @@ export class SubscriptionsController {
   constructor(private readonly subscriptionService: SubscriptionsService) {}
 
   @Post()
-  async create(@CurrentUser() user: User, @Body() dto: CreateSubscriptionDto) {
-    const response = await this.subscriptionService.createSubscription(
+  async create(
+    @CurrentUser() user: User,
+    @Req() req,
+    @Body() dto: CreateSubscriptionDto,
+  ) {
+    return await this.subscriptionService.createSubscription(
       user.id,
       dto.planId,
+      req.headers.authorization,
     );
-
-    return new Response('success', response);
   }
 
   @Get('me')

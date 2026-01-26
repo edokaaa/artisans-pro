@@ -8,10 +8,14 @@ import { SubscriptionsController } from './subscriptions.controller';
 import { AdminSubscriptionsController } from './admin-subscriptions.controller';
 import { PlanService } from './plan.service';
 import { AdminPlansController } from './admin-plans.controller';
+import { PaymentsModule } from 'src/payments/payments.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Subscription, SubscriptionPlan, ServiceProvider]),
+    PaymentsModule,
+    UsersModule,
   ],
   controllers: [
     SubscriptionsController,

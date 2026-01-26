@@ -5,7 +5,6 @@ import {
   PaymentPurpose,
   PaymentStatus,
 } from '../entities/payment.entity';
-import { SubscriptionsService } from 'src/subscriptions/subscriptions.service';
 import { PaymentsService } from '../payments.service';
 import { RabbitMQService } from 'src/messaging/rabbitmq.service';
 import {
@@ -15,6 +14,8 @@ import {
 } from '../interfaces/payment-event.interface';
 import { Offer } from 'src/jobs/entities/offer.entity';
 import { OfferStatus } from 'src/common/enums/offer-status.enum';
+import { Subscription } from 'src/subscriptions/entities/subscription.entity';
+import { SubscriptionStatus } from 'src/common/enums/subscription-status.enum';
 
 @Injectable()
 export class PaymentEventsConsumer implements OnModuleInit {
@@ -23,7 +24,6 @@ export class PaymentEventsConsumer implements OnModuleInit {
   constructor(
     private readonly rabbitMQService: RabbitMQService,
     private readonly dataSource: DataSource,
-    private readonly subscriptionService: SubscriptionsService,
     private readonly paymentService: PaymentsService,
   ) {}
 
@@ -31,7 +31,7 @@ export class PaymentEventsConsumer implements OnModuleInit {
     const channel = await this.rabbitMQService.connect();
 
     const exchange = process.env.RABBITMQ_EXCHANGE;
-    const queue = process.env.RABBITMQ_QUEUE;
+    const queue = 'payment_service_queue';
     const routingKeys = [
       'payment.debit.proservice.subscription',
       'payment.debit.proservice.offer',
@@ -151,16 +151,14 @@ export class PaymentEventsConsumer implements OnModuleInit {
 
     // Domain-specific side effects
     if (purpose === PaymentPurpose.SUBSCRIPTION && jsonPayload.subscriptionId) {
-      await this.subscriptionService.activateSubscription(
-        jsonPayload.subscriptionId,
-        session_id,
-      );
+      await this.activateSubscription(jsonPayload.subscriptionId, session_id);
     }
 
     if (purpose === PaymentPurpose.OFFER && jsonPayload.offerId) {
       await this.markOfferAsPaid(jsonPayload.offerId, false);
     }
   }
+
   /* -----------------------------
    * Payment success handler
    * (called by RabbitMQ consumer)
@@ -185,5 +183,39 @@ export class PaymentEventsConsumer implements OnModuleInit {
       offer.escrowStatus = 'held';
     }
     await offerRepo.save(offer);
+  }
+
+  /* -----------------------------
+   * Activation (payment success)
+   * ----------------------------- */
+  private async activateSubscription(
+    subscriptionId: string,
+    sessionId: string,
+  ) {
+    const subscriptionRepo = this.dataSource.getRepository(Subscription);
+    const subscription = await subscriptionRepo.findOne({
+      where: { id: subscriptionId },
+      relations: ['plan'],
+    });
+
+    if (!subscription) {
+      this.logger.error('Invalid subscription');
+      return;
+    }
+
+    if (subscription.status === SubscriptionStatus.ACTIVE) {
+      return subscription; // idempotent
+    }
+
+    const now = new Date();
+    const endsAt = new Date(now);
+    endsAt.setMonth(endsAt.getMonth() + 1);
+
+    subscription.status = SubscriptionStatus.ACTIVE;
+    subscription.startsAt = now;
+    subscription.endsAt = endsAt;
+    subscription.paymentSessionId = sessionId;
+
+    return subscriptionRepo.save(subscription);
   }
 }
