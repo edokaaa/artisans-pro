@@ -9,7 +9,7 @@ export const typeOrmConfig = (config: ConfigService): TypeOrmModuleOptions => ({
   password: config.get('DB_PASSWORD'),
   database: config.get('DB_NAME'),
 
-  ssl: config.get('DB_SSL') === 'true' ? { rejectUnauthorized: false } : false,
+  ssl: config.get('DB_SSL', false) === 'true' ? { rejectUnauthorized: false } : false,
 
   autoLoadEntities: true,
 

@@ -4,25 +4,18 @@ import {
   IsNotEmpty,
   IsNumber,
   IsString,
+  IsUrl,
   validateSync,
 } from 'class-validator';
 
 class EnvironmentVariables {
   @IsNotEmpty()
   @IsNumber()
-  APP_PORT: number;
+  PORT: number;
 
   @IsNotEmpty()
   @IsString()
-  DB_PASSWORD: string;
-
-  @IsNotEmpty()
-  @IsString()
-  DB_USERNAME: string;
-
-  @IsNotEmpty()
-  @IsString()
-  DB_NAME: string;
+  DB_HOST: string;
 
   @IsNotEmpty()
   @IsNumber()
@@ -30,27 +23,38 @@ class EnvironmentVariables {
 
   @IsNotEmpty()
   @IsString()
-  DB_HOST: string;
+  DB_USERNAME: string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_PASSWORD: string;
+
+  @IsNotEmpty()
+  @IsString()
+  DB_NAME: string;
 
   @IsNotEmpty()
   @IsBoolean()
-  DB_LOGGING: boolean;
+  TYPEORM_LOGGING: boolean;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // JWT_ACCESS_TOKEN_SECRET: string;
+  @IsNotEmpty()
+  @IsBoolean()
+  TYPEORM_MIGRATIONS_RUN: boolean;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // JWT_ACCESS_TOKEN_EXPIRATION: string;
+  @IsNotEmpty()
+  @IsString()
+  RABBITMQ_URL: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // JWT_REFRESH_TOKEN_SECRET: string;
+  @IsNotEmpty()
+  @IsString()
+  RABBITMQ_EXCHANGE: string;
 
-  // @IsNotEmpty()
-  // @IsString()
-  // JWT_REFRESH_TOKEN_EXPIRATION: string;
+  @IsNotEmpty()
+  @IsString()
+  JWT_PUBLIC_KEY_PATH: string;
+
+  @IsNotEmpty()
+  PAYMENT_SERVICE_BASE_URL: string;
 }
 
 export function validate(config: Record<string, unknown>) {

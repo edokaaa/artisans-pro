@@ -45,18 +45,20 @@ npm install
 Create a `.env` file in the project root:
 
 ```env
-NODE_ENV=development
-APP_PORT=3000
+APP_ENV=staging
+PORT=3000
 DB_HOST=localhost
 DB_PORT=5432
 DB_USERNAME=postgres
 DB_PASSWORD=postgres
 DB_NAME=nest_db
 DB_LOGGING=true
-DB_SSL=false
 TYPEORM_LOGGING=false
 TYPEORM_MIGRATIONS_RUN=true
 RABBITMQ_URL=amqps://user:password@broker.example.com/vhost
+RABBITMQ_EXCHANGE=easybud_exchange
+RABBITMQ_QUEUE=default
+PAYMENT_SERVICE_BASE_URL=
 JWT_PUBLIC_KEY_PATH=./keys/public.pem
 ```
 
