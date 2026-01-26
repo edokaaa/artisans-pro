@@ -1,6 +1,6 @@
-# Pro Service - EasyBud
+# Pro Service
 
-A NestJS-based microservice for managing service providers, categories, skills, and reviews. Features geolocation-based provider discovery, JWT authentication, and RabbitMQ event messaging.
+A NestJS-based microservice for managing service providers, categories, skills, reviews, payments and subscriptions. Features geolocation-based provider discovery, JWT authentication, and RabbitMQ event messaging.
 
 ## Tech Stack
 
@@ -56,7 +56,7 @@ DB_LOGGING=true
 TYPEORM_LOGGING=false
 TYPEORM_MIGRATIONS_RUN=true
 RABBITMQ_URL=amqps://user:password@broker.example.com/vhost
-RABBITMQ_EXCHANGE=easybud_exchange
+RABBITMQ_EXCHANGE=exchange_name
 RABBITMQ_QUEUE=default
 PAYMENT_SERVICE_BASE_URL=
 JWT_PUBLIC_KEY_PATH=./keys/public.pem
@@ -235,7 +235,9 @@ src/
 │   └── seeders/
 ├── jobs/             # Job & service request management
 ├── messaging/        # RabbitMQ integration
+├── payments/          # Payment management
 ├── reviews/          # Review & rating system
+├── subscriptions/     # Subscriptions system
 ├── users/            # User, client, service provider management
 ├── app.module.ts     # Root module
 └── main.ts          # Application entry point
