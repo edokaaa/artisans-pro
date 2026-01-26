@@ -33,10 +33,13 @@ export class AdminPlansController {
   }
 
   @Patch(':id')
-  async update(@Param('id') id: string, @Body() dto: Partial<AdminCreatePlanDto>) {
+  async update(
+    @Param('id') id: string,
+    @Body() dto: Partial<AdminCreatePlanDto>,
+  ) {
     const response = await this.planService.update(id, {
       name: dto.name,
-      price: dto.price
+      price: dto.price,
     });
 
     return new Response('success', response);

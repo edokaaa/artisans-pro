@@ -23,10 +23,8 @@ export class SubscriptionsController {
 
   @Get('me')
   async mySubscription(@CurrentUser() user: User) {
-    const response = await this.subscriptionService.getActiveSubscriptionForProvider(
-      user.id,
-    );
+    const response =
+      await this.subscriptionService.getActiveSubscriptionForProvider(user.id);
     return new Response('success', response);
   }
-
 }

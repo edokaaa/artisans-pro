@@ -7,6 +7,8 @@ import { HttpService } from '@nestjs/axios';
 import axiosRetry from 'axios-retry';
 import { firstValueFrom } from 'rxjs';
 import { createTransactionRecordDto } from './dto/create-transaction-record.dto';
+import { InitiateTransactionDto } from './dto/initiate-transaction.dto';
+import { PaymentPurpose } from './entities/payment.entity';
 
 @Injectable()
 export class PaymentsService {
@@ -32,21 +34,38 @@ export class PaymentsService {
   private get headers() {
     return {
       'x-service-secret': process.env.PAYMENT_SERVICE_SECRET,
+      // 'Authorization':
     };
   }
 
   // -----------------------------
   // Initiate Transaction
   // -----------------------------
-  async initiateTransaction(payload: {
-    amount: number;
-    service: 'proservice.subscription' | 'proservice.offer';
-    payload?: Record<string, any>;
-  }) {
+  async initiateTransaction(payload: InitiateTransactionDto) {
     try {
+      const reqPayload = {
+        amount: payload.amount,
+        service:
+          payload.purpose === PaymentPurpose.OFFER
+            ? 'proservice.offer'
+            : 'proservice.subscription',
+        payload: {
+          offerId: payload.offerId,
+          offerName: payload.offerName,
+          subcriptionId: payload.subscriptionId,
+          subcriptionPlanName: payload.subscriptionPlanName,
+          amount: payload.amount,
+        },
+      };
+
+      const headers = {
+        ...this.headers,
+        'x-user-id': payload.userId,
+        authorization: payload.authToken,
+      };
       const res = await firstValueFrom(
-        this.http.post(`${this.baseUrl}/transaction/initiate`, payload, {
-          headers: this.headers,
+        this.http.post(`${this.baseUrl}/transaction/initiate`, reqPayload, {
+          headers,
           timeout: 5_000,
         }),
       );

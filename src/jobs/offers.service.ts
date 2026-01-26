@@ -10,6 +10,9 @@ import { UsersService } from 'src/users/users.service';
 import { Offer } from './entities/offer.entity';
 import { OfferStatus } from 'src/common/enums/offer-status.enum';
 import { CreateOfferDto } from './dto/create-offer.dto';
+import { PaymentsService } from 'src/payments/payments.service';
+import { PaymentPurpose } from 'src/payments/entities/payment.entity';
+import { InitiateTransactionDto } from 'src/payments/dto/initiate-transaction.dto';
 
 @Injectable()
 export class OffersService {
@@ -18,6 +21,8 @@ export class OffersService {
     private readonly offerRepo: Repository<Offer>,
 
     private readonly usersService: UsersService,
+
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   async createOffer(userId: string, data: CreateOfferDto): Promise<Offer> {
@@ -62,9 +67,42 @@ export class OffersService {
     return this.offerRepo.save(offer);
   }
 
-  async makePayment(offerId: string) {
-    // TODO: pending
-    throw new BadRequestException('Feature pending');
+  async makePayment(offerId: string, clientUserId: string, authToken: string) {
+    const offer = await this.get(offerId, ['client']);
+    const client = await this.usersService.assertClient(clientUserId);
+
+    if (client.id !== offer.client.id) {
+      throw new BadRequestException('Invalid Request: invalid client offer!');
+    }
+
+    if (offer.status !== OfferStatus.ACCEPTED) {
+      throw new BadRequestException(
+        'Invalid Request: offer must be accepted first!',
+      );
+    }
+
+    const payload: InitiateTransactionDto = {
+      amount: offer.amount,
+      offerName: offer.title,
+      userId: clientUserId,
+      offerId,
+      authToken,
+      purpose: PaymentPurpose.OFFER,
+    };
+
+    return await this.paymentsService.initiateTransaction(payload);
+  }
+
+  async get(offerId: string, relations: string[] = []): Promise<Offer> {
+    const offer = await this.offerRepo.findOne({
+      where: { id: offerId },
+      relations,
+    });
+
+    if (!offer) {
+      throw new NotFoundException('Offer not found');
+    }
+    return offer;
   }
 
   /* -----------------------------
@@ -72,13 +110,7 @@ export class OffersService {
    * (called by RabbitMQ consumer)
    * ----------------------------- */
   async markOfferAsPaid(offerId: string, useEscrow: boolean) {
-    const offer = await this.offerRepo.findOne({
-      where: { id: offerId },
-    });
-
-    if (!offer) {
-      throw new NotFoundException('Offer not found');
-    }
+    const offer = await this.get(offerId);
 
     if (offer.status === OfferStatus.PAYMENT_MADE) {
       return offer; // idempotent

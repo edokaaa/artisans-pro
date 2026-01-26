@@ -6,6 +6,7 @@ import {
   Body,
   UseGuards,
   Get,
+  Req,
 } from '@nestjs/common';
 
 import { JobsService } from './jobs.service';
@@ -180,11 +181,14 @@ export class JobsController {
 
   @Post('/offers/:offerId/make-payment')
   async makeOfferPayment(
+    @Req() req,
     @CurrentUser() user: User,
     @Param('offerId') offerId: string,
   ): Promise<Response> {
-    const response = await this.offersService.makePayment(offerId);
-
-    return new Response('success', response);
+    return await this.offersService.makePayment(
+      offerId,
+      user.id,
+      req.headers.authorization,
+    );
   }
 }

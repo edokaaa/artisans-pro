@@ -21,4 +21,3 @@ export class AdminCreatePlanDto {
   @IsBoolean()
   isActive?: boolean;
 }
-

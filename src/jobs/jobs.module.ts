@@ -10,6 +10,7 @@ import { ServiceCategorySkill } from 'src/categories/entities/service-category-s
 import { OffersService } from './offers.service';
 import { ServiceRequestsService } from './service-requests.service';
 import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
+import { PaymentsModule } from 'src/payments/payments.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { SubscriptionsModule } from 'src/subscriptions/subscriptions.module';
     ]),
     UsersModule,
     SubscriptionsModule,
+    PaymentsModule,
   ],
   providers: [JobsService, OffersService, ServiceRequestsService],
   exports: [JobsService, OffersService, ServiceRequestsService],

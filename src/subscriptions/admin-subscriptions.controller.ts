@@ -27,7 +27,8 @@ export class AdminSubscriptionsController {
 
   @Patch(':id/activate')
   async activate(@Param('id') id: string) {
-    const response = await this.subscriptionService.adminActivateSubscription(id);
+    const response =
+      await this.subscriptionService.adminActivateSubscription(id);
 
     return new Response('success', response);
   }

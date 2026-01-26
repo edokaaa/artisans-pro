@@ -13,7 +13,11 @@ import { AdminPlansController } from './admin-plans.controller';
   imports: [
     TypeOrmModule.forFeature([Subscription, SubscriptionPlan, ServiceProvider]),
   ],
-  controllers: [SubscriptionsController, AdminSubscriptionsController, AdminPlansController],
+  controllers: [
+    SubscriptionsController,
+    AdminSubscriptionsController,
+    AdminPlansController,
+  ],
   providers: [SubscriptionsService, PlanService],
   exports: [SubscriptionsService, PlanService],
 })
