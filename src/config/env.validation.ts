@@ -55,6 +55,46 @@ class EnvironmentVariables {
 
   @IsNotEmpty()
   PAYMENT_SERVICE_BASE_URL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  SERVICE_ID: string;
+
+  @IsNotEmpty()
+  @IsString()
+  SERVICE_SECRET: string;
+
+  @IsNotEmpty()
+  @IsString()
+  SERVICE_KID: string;
+
+  @IsNotEmpty()
+  @IsString()
+  SERVICE_PUBKEY_PATH: string;
+
+  @IsNotEmpty()
+  @IsString()
+  SERVICE_PRIVKEY_PATH: string;
+
+  @IsNotEmpty()
+  @IsString()
+  AUTH_SERVICE_URL: string;
+
+  @IsNotEmpty()
+  @IsString()
+  REDIS_HOST: string;
+
+  @IsNotEmpty()
+  @IsString()
+  REDIS_PASSWORD: string;
+
+  @IsNotEmpty()
+  @IsString()
+  REDIS_PORT: string;
+
+  @IsNotEmpty()
+  @IsString()
+  REDIS_DB: string;
 }
 
 export function validate(config: Record<string, unknown>) {
