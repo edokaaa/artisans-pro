@@ -9,12 +9,16 @@ import { firstValueFrom } from 'rxjs';
 import { createTransactionRecordDto } from './dto/create-transaction-record.dto';
 import { InitiateTransactionDto } from './dto/initiate-transaction.dto';
 import { PaymentPurpose } from './entities/payment.entity';
+import { ServiceTokenManager } from 'src/auth/service-token-manager';
 
 @Injectable()
 export class PaymentsService {
   private readonly logger = new Logger(PaymentsService.name);
 
-  constructor(private readonly http: HttpService) {
+  constructor(
+    private readonly http: HttpService,
+    private readonly tokenManager: ServiceTokenManager,
+  ) {
     axiosRetry(this.http.axiosRef, {
       retries: 3,
       retryDelay: axiosRetry.exponentialDelay,
@@ -28,13 +32,13 @@ export class PaymentsService {
   }
 
   private get baseUrl() {
-    return process.env.PAYMENT_SERVICE_BASE_URL;
+    return `${process.env.PAYMENT_SERVICE_BASE_URL}/api`;
   }
 
-  private get headers() {
+  private async tokenHeader() {
+    const token = await this.tokenManager.getToken();
     return {
-      'x-service-secret': process.env.PAYMENT_SERVICE_SECRET,
-      // 'Authorization':
+      'X-Service-Token': token,
     };
   }
 
@@ -58,10 +62,12 @@ export class PaymentsService {
         },
       };
 
+      const tokenHeader = await this.tokenHeader();
+
       const headers = {
-        ...this.headers,
-        'x-user-id': payload.userId,
-        authorization: payload.authToken,
+        ...tokenHeader,
+        'X-User-Id': payload.userId,
+        Authorization: `Bearer ${payload.authToken}`,
       };
       const res = await firstValueFrom(
         this.http.post(`${this.baseUrl}/transaction/initiate`, reqPayload, {
@@ -85,12 +91,14 @@ export class PaymentsService {
   // -----------------------------
   async reverseDebit(sessionId: string) {
     try {
+      const tokenHeader = await this.tokenHeader();
+
       await firstValueFrom(
         this.http.post(
           `${this.baseUrl}/transaction/reverse-debit`,
           { session_id: sessionId },
           {
-            headers: this.headers,
+            headers: tokenHeader,
             timeout: 5_000,
           },
         ),
@@ -116,13 +124,15 @@ export class PaymentsService {
   // Create Transaction Record
   // -----------------------------
   async createTransactionRecord(payload: createTransactionRecordDto) {
+    const tokenHeader = await this.tokenHeader();
+
     try {
       await firstValueFrom(
         this.http.post(
           `${this.baseUrl}/transaction/create-transaction-record`,
           payload,
           {
-            headers: this.headers,
+            headers: tokenHeader,
             timeout: 5_000,
           },
         ),
