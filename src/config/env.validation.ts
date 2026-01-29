@@ -84,7 +84,6 @@ class EnvironmentVariables {
   @IsString()
   REDIS_HOST: string;
 
-  @IsNotEmpty()
   @IsString()
   REDIS_PASSWORD: string;
 
